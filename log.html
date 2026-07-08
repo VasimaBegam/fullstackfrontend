@@ -1,117 +1,391 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>FitLog - Exercise Log Management</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitLog - Premium Exercise Log Portal</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: #f4f6f9;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: #f1f5f9;
         }
 
+        /* 1. Brand Header Navbar */
         nav {
-            background: #0d6efd;
-            color: white;
-            padding: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #111827;
+            padding: 18px 5%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid #1f2937;
         }
 
         nav h2 {
-            display: inline;
+            font-size: 22px;
+            font-weight: 800;
+            color: #3b82f6;
+            letter-spacing: 0.5px;
         }
 
         nav ul {
             list-style: none;
-            float: right;
             display: flex;
             align-items: center;
-        }
-
-        nav ul li {
-            display: inline;
-            margin-left: 25px;
-        }
-
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        nav ul li a:hover {
-            color: yellow;
+            gap: 20px;
         }
 
         .user-email {
-            font-size: 14px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-weight: normal;
+            font-size: 13px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            color: #3b82f6;
+            font-weight: 600;
         }
 
+        nav ul li a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #3b82f6;
+        }
+
+        /* 2. Page Structure Container */
         .container {
             width: 90%;
-            margin: auto;
+            max-width: 1200px;
+            margin: 40px auto;
         }
 
         h1 {
-            text-align: center;
-            margin-top: 30px;
-            color: #0d6efd;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+            margin-bottom: 30px;
+            border-left: 4px solid #3b82f6;
+            padding-left: 15px;
+            text-transform: uppercase;
         }
 
-        #crudSection {
-            margin-top: 40px;
-            background: white;
-            padding: 20px;
+        /* 3. Upper Presentation Banner Section (Webpage Look) */
+        .promo-banner {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            background: #111827;
+            color: white;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            border: 1px solid #1f2937;
+        }
+
+        .promo-text {
+            padding: 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .promo-text h3 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .promo-text p {
+            color: #94a3b8;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .metrics-panel {
+            background: #1f2937;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 15px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .metric-item {
+            background: #111827;
+            padding: 14px;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px gray;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #374151;
         }
 
+        .metric-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .metric-icon { font-size: 22px; }
+        .metric-title { font-weight: 600; font-size: 14px; color: #f1f5f9; }
+        .metric-desc { font-size: 12px; color: #64748b; }
+        .metric-value { background: rgba(234, 179, 8, 0.15); color: #eab308; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 12px; }
+
+        /* 4. Expanded Feature Cards Matrix */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .feature-card {
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid #1f2937;
+            padding: 25px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #3b82f6;
+            background: #111827;
+        }
+
+        .feature-card h4 {
+            font-size: 17px;
+            color: #ffffff;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        /* 5. Informative Secondary Knowledge Panels */
+        .knowledge-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .knowledge-box {
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .knowledge-box h3 {
+            font-size: 19px;
+            margin-bottom: 15px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #1f2937;
+            padding-bottom: 10px;
+        }
+
+        .knowledge-box ul {
+            list-style: none;
+        }
+
+        .knowledge-box ul li {
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #94a3b8;
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .knowledge-box ul li strong {
+            color: #cbd5e1;
+        }
+
+        /* 6. Health Alert Info Strip */
+        .info-strip {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-left: 4px solid #3b82f6;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+            font-size: 14px;
+            color: #93c5fd;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* 7. Core Operational CRUD Console */
+        #crudSection {
+            background: #111827;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid #1f2937;
+            border-top: 4px solid #3b82f6;
+        }
+
+        #crudSection h2 {
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -0.3px;
+        }
+
+        /* Interactive Trigger Buttons */
         button {
-            padding: 10px 20px;
-            margin: 5px;
-            background: #0d6efd;
+            padding: 12px 22px;
+            margin: 6px;
+            background: #3b82f6;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
             cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         button:hover {
-            background: #084298;
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(59, 130, 246, 0.35);
         }
 
+        button[onclick*="loadExerciseLog"] {
+            background: #374151;
+            box-shadow: none;
+        }
+        button[onclick*="loadExerciseLog"]:hover {
+            background: #4b5563;
+        }
+
+        /* 8. Input Fields Inside CRUD Forms */
         input, select {
-            padding: 10px;
-            margin: 5px;
-            width: 250px;
+            padding: 14px 16px;
+            margin: 8px 0;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            font-size: 15px;
+            background-color: #1f2937;
+            color: #ffffff;
+            outline: none;
+            transition: all 0.3s ease;
+            display: block;
         }
 
+        input::placeholder { color: #64748b; }
+        input:focus {
+            border-color: #3b82f6;
+            background-color: #111827;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+
+        /* Custom Checkbox Container styling */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+            cursor: pointer;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+
+        .checkbox-container input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #3b82f6;
+            display: inline-block;
+            margin: 0;
+        }
+
+        /* 9. Dynamic Responsive Tables */
         table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        table, tr, th, td {
-            border: 1px solid gray;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 25px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #1f2937;
         }
 
         th {
-            background: #0d6efd;
-            color: white;
+            background: #1f2937;
+            color: #f1f5f9;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #374151;
         }
 
-        th, td {
-            padding: 10px;
-            text-align: center;
+        td {
+            background: #111827;
+            color: #cbd5e1;
+            font-size: 14px;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        th, td { padding: 16px; text-align: center; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #1e293b; color: #ffffff; }
+
+        #success, #error {
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        @media (max-width: 900px) {
+            .promo-banner, .features-grid, .knowledge-section {
+                grid-template-columns: 1fr;
+            }
+            .metrics-panel {
+                border-left: none;
+                border-top: 4px solid #3b82f6;
+            }
         }
     </style>
 </head>
@@ -119,7 +393,7 @@
 <body>
 
     <nav>
-        <h2>FitLog Exercise Log Panel</h2>
+        <h2>FitLog Performance Hub</h2>
         <ul>
             <li><span id="nav-email" class="user-email">Logged in as: </span></li>
             <li><a href="Dashboard.html">🏠 Dashboard Hub</a></li>
@@ -128,7 +402,80 @@
     </nav>
 
     <div class="container">
-        <h1>EXERCISE LOG MANAGEMENT</h1>
+        <h1>Exercise Log Management</h1>
+
+        <div class="promo-banner">
+            <div class="promo-text">
+                <h3>Track Progressive Overload & PR Metrics</h3>
+                <p>Every single set, rep, and kilogram matters when you are tracking continuous hypertrophy and strength gains. FitLog Performance Console lets you capture high-fidelity workout sessions seamlessly into our system framework.</p>
+                <p>Ensure you audit your heavy compound sets regularly below to visualize load spikes, target specific mechanical stress zones, and break records safely.</p>
+            </div>
+            
+            <div class="metrics-panel">
+                <div class="metric-item">
+                    <div class="metric-meta">
+                        <span class="metric-icon">🏋️‍♂️</span>
+                        <div>
+                            <div class="metric-title">Highest Active Load</div>
+                            <div class="metric-desc">Deadlift / Squat Heavy Record</div>
+                        </div>
+                    </div>
+                    <div class="metric-value">142.5 KG</div>
+                </div>
+
+                <div class="metric-item">
+                    <div class="metric-meta">
+                        <span class="metric-icon">🔥</span>
+                        <div>
+                            <div class="metric-title">Personal Records Hit</div>
+                            <div class="metric-desc">Active PR Flag Nodes Count</div>
+                        </div>
+                    </div>
+                    <div class="metric-value" style="color: #10b981; background: rgba(16, 185, 129, 0.15);">12 Active</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h4>⚡ Velocity Tracking</h4>
+                <p>Log actual sets and micro-reps directly to observe metabolic stress profiles across complex training blocks over time.</p>
+            </div>
+            <div class="feature-card">
+                <h4>🎯 Objective Metrics</h4>
+                <p>Mark critical sets with the <strong>Personal Record (PR)</strong> boolean flag to separate casual training logs from extreme milestones.</p>
+            </div>
+            <div class="feature-card">
+                <h4>📡 Multi-Node REST Sync</h4>
+                <p>Direct interaction architecture connecting input forms instantly to the centralized cluster backend using secure API nodes.</p>
+            </div>
+        </div>
+
+        <div class="knowledge-section">
+            <div class="knowledge-box">
+                <h3>📋 Exercise Parameter Guide</h3>
+                <ul>
+                    <li>🔹 <strong>Exercise Name:</strong> Enter precise nomenclatures (e.g., 'Barbell Bench Press', 'Incline Dumbbell Flyes') for clean structural grouping.</li>
+                    <li>🔹 <strong>Actual Sets & Reps:</strong> Total completed mechanical sequences. Avoid logging warm-ups; document working sets only.</li>
+                    <li>🔹 <strong>Actual Weight (Kg):</strong> The true external load configuration. Include the bar weight (typically 20kg for standard Olympic barbells).</li>
+                    <li>🔹 <strong>PR Flag Node:</strong> Checking this activates visual glowing highlights across data pipelines to preserve your legendary lifting logs.</li>
+                </ul>
+            </div>
+            
+            <div class="knowledge-box">
+                <h3>💡 Performance Console FAQ</h3>
+                <ul>
+                    <li>❓ <strong>How to map drop-sets?</strong> Use the <strong>POST</strong> panel to document separate lines per weight drop or update them seamlessly via <strong>PATCH</strong> commands.</li>
+                    <li>❓ <strong>What does PUT do here?</strong> It rewrites the chosen data block entry row completely, ensuring structural validation is preserved entirely.</li>
+                    <li>❓ <strong>Can I remove corrupt logs?</strong> Yes, clear out faulty or miscalculated logging nodes using the specialized <strong>DELETE console</strong> mechanism effortlessly.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info-strip">
+            <span>🚀</span>
+            <p><strong>Pro Overload Tip:</strong> Aim to increase either your reps or total load by at least 1-2% every week, and update the <strong>CRUD Console</strong> down below to visualize the curve!</p>
+        </div>
 
         <div id="crudSection">
             </div>
@@ -139,7 +486,7 @@
         const token = localStorage.getItem('jwt_token');
         const crud = document.getElementById("crudSection");
 
-        // Auth Guard
+        // Auth Guard Control System
         document.addEventListener("DOMContentLoaded", function() {
             if (!token) {
                 window.location.href = '../login.html';
@@ -160,6 +507,7 @@
             window.location.href = '../login.html';
         }
 
+        // Common API Headers configuration
         function headers() {
             return {
                 "Content-Type": "application/json",
@@ -171,7 +519,7 @@
 
         function loadExerciseLog() {
             crud.innerHTML = `
-                <h2 align="center">Exercise Log CRUD</h2>
+                <h2 style="text-align: center;">Exercise Log CRUD Console</h2>
                 <br>
                 <div style="text-align: center;">
                     <button onclick="postExerciseLog()">POST</button>
@@ -189,25 +537,26 @@
         function postExerciseLog() {
             crud.innerHTML = `
                 <h2>Exercise Log - POST (Add Log)</h2>
-                <button onclick="loadExerciseLog()">⬅️ Back</button>
+                <button onclick="loadExerciseLog()">⬅ Back</button>
                 <br><br>
                 <input type="number" id="Id" placeholder="ID"><br>
                 <input type="text" id="logExerciseName" placeholder="Exercise Name"><br>
                 <input type="number" id="logActualSets" placeholder="Actual Sets"><br>
                 <input type="number" id="logActualReps" placeholder="Actual Reps"><br>
                 <input type="number" step="0.01" id="logActualWeight" placeholder="Actual Weight (Kg)"><br>
-                <label style="margin: 5px; display: inline-block;">
-                    <input type="checkbox" id="logIsPR" style="width: auto; margin-right: 5px;"> Personal Record (PR)?
+                
+                <label class="checkbox-container">
+                    <input type="checkbox" id="logIsPR"> Personal Record (PR)? 🔥
                 </label>
+                <br>
+                <button onclick="saveExerciseLogLogic()">Save Log</button>
                 <br><br>
-                <button onclick="saveExerciseLog()">Save Log</button>
-                <br><br>
-                <p id="success" style="color:green; font-weight:bold;"></p>
-                <p id="error" style="color:red; font-weight:bold;"></p>
+                <p id="success" style="color:#10b981; font-weight:bold;"></p>
+                <p id="error" style="color:#ef4444; font-weight:bold;"></p>
             `;
         }
 
-        async function saveExerciseLog() {
+        async function saveExerciseLogLogic() {
             const id = document.getElementById("Id").value;
             const exerciseName = document.getElementById("logExerciseName").value.trim();
             const actualSets = parseInt(document.getElementById("logActualSets").value);
@@ -246,7 +595,7 @@
         async function getAllExerciseLog() {
             crud.innerHTML = `
                 <h2>Exercise Log - GET ALL</h2>
-                <button onclick="loadExerciseLog()">⬅️ Back</button>
+                <button onclick="loadExerciseLog()">⬅ Back</button>
                 <br><br>
                 <table>
                     <thead>
@@ -256,7 +605,7 @@
                             <th>Sets</th>
                             <th>Reps</th>
                             <th>Weight (Kg)</th>
-                            <th>PR?</th>
+                            <th>PR Status</th>
                         </tr>
                     </thead>
                     <tbody id="logTable"></tbody>
@@ -274,11 +623,11 @@
                     rows += `
                         <tr>
                             <td>${item.id}</td>
-                            <td>${item.exerciseName}</td>
-                            <td>${item.actualSets}</td>
-                            <td>${item.actualReps}</td>
-                            <td>${item.actualWeightKg} kg</td>
-                            <td>${item.isPersonalRecord ? "🔥 Yes" : "No"}</td>
+                            <td><strong>${item.exerciseName}</strong></td>
+                            <td>${item.actualSets || 0}</td>
+                            <td>${item.actualReps || 0}</td>
+                            <td>${item.actualWeightKg ? item.actualWeightKg + " kg" : "—"}</td>
+                            <td>${item.isPersonalRecord ? "<span style='color:#eab308; font-weight:bold;'>🔥 PR</span>" : "Standard"}</td>
                         </tr>
                     `;
                 });
@@ -288,21 +637,20 @@
             }
         }
 
-        font
         function getByIdExerciseLog() {
             crud.innerHTML = `
                 <h2>Exercise Log - GET BY ID</h2>
-                <button onclick="loadExerciseLog()">⬅️ Back</button>
+                <button onclick="loadExerciseLog()">⬅ Back</button>
                 <br><br>
                 <input type="number" id="searchLogId" placeholder="Enter Log ID">
-                <br><br>
-                <button onclick="searchExerciseLog()">Search</button>
+                <br>
+                <button onclick="searchExerciseLogLogic()">Search</button>
                 <br><br>
                 <div id="logResult"></div>
             `;
         }
 
-        async function searchExerciseLog() {
+        async function searchExerciseLogLogic() {
             const id = document.getElementById("searchLogId").value;
             if (!id) return alert("Please enter an ID");
 
@@ -315,19 +663,19 @@
                     const data = await response.json();
                     document.getElementById("logResult").innerHTML = `
                         <table>
-                            <tr><th>ID</th><th>Exercise Name</th><th>Sets</th><th>Reps</th><th>Weight</th><th>PR?</th></tr>
+                            <tr><th>ID</th><th>Exercise Name</th><th>Sets</th><th>Reps</th><th>Weight</th><th>PR Status</th></tr>
                             <tr>
                                 <td>${data.id}</td>
-                                <td>${data.exerciseName}</td>
-                                <td>${data.actualSets}</td>
-                                <td>${data.actualReps}</td>
-                                <td>${data.actualWeightKg} kg</td>
-                                <td>${data.isPersonalRecord ? "🔥 Yes" : "No"}</td>
+                                <td><strong>${data.exerciseName}</strong></td>
+                                <td>${data.actualSets || 0}</td>
+                                <td>${data.actualReps || 0}</td>
+                                <td>${data.actualWeightKg ? data.actualWeightKg + " kg" : "—"}</td>
+                                <td>${data.isPersonalRecord ? "<span style='color:#eab308; font-weight:bold;'>🔥 PR</span>" : "Standard"}</td>
                             </tr>
                         </table>
                     `;
                 } else {
-                    document.getElementById("logResult").innerHTML = "<h3 style='color:red;'>Log Not Found</h3>";
+                    document.getElementById("logResult").innerHTML = "<h3 style='color:#ef4444; margin-top:15px;'>Log Not Found</h3>";
                 }
             } catch (e) {
                 alert("Server Error");
@@ -337,21 +685,22 @@
         function putExerciseLog() {
             crud.innerHTML = `
                 <h2>Update Exercise Log (PUT)</h2>
-                <button onclick="loadExerciseLog()">⬅️ Back</button>
+                <button onclick="loadExerciseLog()">⬅ Back</button>
                 <br><br>
                 <input type="number" id="updateLogId" placeholder="Enter Log ID"><br>
                 <input type="text" id="updateLogName" placeholder="Exercise Name"><br>
                 <input type="number" id="updateLogSets" placeholder="Actual Sets"><br>
                 <input type="number" id="updateLogReps" placeholder="Actual Reps"><br>
                 <input type="number" step="0.01" id="updateLogWeight" placeholder="Actual Weight (Kg)"><br>
-                <label style="margin: 5px; display: inline-block;">
-                    <input type="checkbox" id="updateLogPR" style="width: auto; margin-right: 5px;"> Personal Record (PR)?
+                
+                <label class="checkbox-container">
+                    <input type="checkbox" id="updateLogPR"> Personal Record (PR)? 🔥
                 </label>
-                <br><br>
+                <br>
                 <button onclick="updateExerciseLogLogic()">Update Log</button>
                 <br><br>
-                <p id="success" style="color:green; font-weight:bold;"></p>
-                <p id="error" style="color:red; font-weight:bold;"></p>
+                <p id="success" style="color:#10b981; font-weight:bold;"></p>
+                <p id="error" style="color:#ef4444; font-weight:bold;"></p>
             `;
         }
 
@@ -385,21 +734,22 @@
         function patchExerciseLog() {
             crud.innerHTML = `
                 <h2>Modify Exercise Log (PATCH)</h2>
-                <button onclick="loadExerciseLog()">⬅️ Back</button>
+                <button onclick="loadExerciseLog()">⬅ Back</button>
                 <br><br>
                 <input type="number" id="patchLogId" placeholder="Enter Log ID"><br>
                 <input type="text" id="patchLogName" placeholder="Exercise Name (Optional)"><br>
                 <input type="number" id="patchLogSets" placeholder="Actual Sets (Optional)"><br>
                 <input type="number" id="patchLogReps" placeholder="Actual Reps (Optional)"><br>
                 <input type="number" step="0.01" id="patchLogWeight" placeholder="Actual Weight (Kg) (Optional)"><br>
-                <label style="margin: 5px; display: inline-block;">
-                    <input type="checkbox" id="patchLogPR" style="width: auto; margin-right: 5px;"> Personal Record (PR)?
+                
+                <label class="checkbox-container">
+                    <input type="checkbox" id="patchLogPR"> Personal Record (PR)? 🔥
                 </label>
-                <br><br>
+                <br>
                 <button onclick="modifyExerciseLogLogic()">Modify Log</button>
                 <br><br>
-                <p id="success" style="color:green; font-weight:bold;"></p>
-                <p id="error" style="color:red; font-weight:bold;"></p>
+                <p id="success" style="color:#10b981; font-weight:bold;"></p>
+                <p id="error" style="color:#ef4444; font-weight:bold;"></p>
             `;
         }
 
@@ -440,18 +790,18 @@
         function deleteExerciseLog() {
             crud.innerHTML = `
                 <h2>Delete Exercise Log 🗑️</h2>
-                <button onclick="loadExerciseLog()">⬅️ Back</button>
+                <button onclick="loadExerciseLog()">⬅ Back</button>
                 <br><br>
                 <input type="number" id="deleteLogId" placeholder="Enter Log ID">
+                <br>
+                <button onclick="removeExerciseLogLogic()">Delete</button>
                 <br><br>
-                <button onclick="removeExerciseLog()">Delete</button>
-                <br><br>
-                <p id="success" style="color:green; font-weight:bold;"></p>
-                <p id="error" style="color:red; font-weight:bold;"></p>
+                <p id="success" style="color:#10b981; font-weight:bold;"></p>
+                <p id="error" style="color:#ef4444; font-weight:bold;"></p>
             `;
         }
 
-        async function removeExerciseLog() {
+        async function removeExerciseLogLogic() {
             const id = document.getElementById("deleteLogId").value;
             if(!id) return alert("Please enter an ID to delete!");
 
