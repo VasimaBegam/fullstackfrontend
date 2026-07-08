@@ -1,97 +1,132 @@
-
-
-   <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 
 <head>
     <title>FitLog Main Dashboard</title>
     <style>
+        /* ─── MODERN RESET & THEME VARIABLES ─── */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
 
         body {
-            background: #f4f6f9;
+            background: #f8fafc;
+            color: #0f172a;
         }
 
+        /* ─── PREMIUM NAVIGATION BAR ─── */
         nav {
-            background: #0d6efd;
+            background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
             color: white;
-            padding: 18px;
+            padding: 16px 5%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         nav h2 {
-            display: inline;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
 
         nav ul {
             list-style: none;
-            float: right;
             display: flex;
             align-items: center;
+            gap: 15px;
         }
 
         nav ul li {
-            display: inline;
-            margin-left: 25px;
+            margin-left: 0; /* Flex gap handles spacing cleanly */
         }
 
         nav ul li a {
-            color: white;
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            padding: 8px 16px;
+            border-radius: 8px;
         }
 
         nav ul li a:hover {
-            color: yellow;
+            color: #fef08a;
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .user-email {
-            font-size: 14px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-weight: normal;
+            font-size: 13px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
+        /* ─── MAIN LAYOUT CONTAINER ─── */
         .container {
             width: 90%;
-            margin: auto;
+            max-width: 1200px;
+            margin: 40px auto;
         }
 
         h1 {
             text-align: center;
-            margin-top: 30px;
-            color: #0d6efd;
+            color: #1e293b;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
         }
 
+        /* ─── MODERN PREMIUM CARD GRID ─── */
         .cards {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 25px;
-            margin-top: 40px;
+            margin-top: 35px;
         }
 
         .card {
-            width: 250px;
-            height: 150px;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px gray;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
             text-align: center;
-            padding-top: 40px;
+            padding: 45px 20px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e3a8a;
+            transition: color 0.2s ease;
         }
 
         .card:hover {
-            background: #0d6efd;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px -5px rgba(37, 99, 235, 0.25);
+            border-color: transparent;
+        }
+
+        .card:hover h2 {
             color: white;
-            transform: scale(1.05);
         }
     </style>
 </head>
@@ -99,7 +134,7 @@
 <body>
 
     <nav>
-        <h2>FitLog Dashboard</h2>
+        <h2>⚡ FitLog Dashboard</h2>
         <ul>
             <li><span id="nav-email" class="user-email">Logged in as: </span></li>
             <li><a href="index.html">Home</a></li>
@@ -109,7 +144,7 @@
     </nav>
 
     <div class="container">
-        <h1>FITLOG MANAGEMENT SYSTEM</h1>
+        <h1>FitLog Management System</h1>
 
         <div class="cards">
             <div class="card" onclick="window.location.href='account.html'">
