@@ -2,136 +2,414 @@
 <html>
 
 <head>
-    <title>FitLog - Workout Routine Management</title>
+    <title>FitLog - My Workout Dashboard</title>
     <style>
+        /* ─── MODERN RESET & THEME VARIABLES ─── */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
 
         body {
-            background: #f4f6f9;
+            background: #f8fafc;
+            color: #0f172a;
+            line-height: 1.6;
         }
 
+        /* ─── NAVIGATION BAR ─── */
         nav {
-            background: #0d6efd;
+            background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
             color: white;
-            padding: 18px;
+            padding: 16px 5%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         nav h2 {
-            display: inline;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         nav ul {
             list-style: none;
-            float: right;
             display: flex;
             align-items: center;
-        }
-
-        nav ul li {
-            display: inline;
-            margin-left: 25px;
+            gap: 15px;
         }
 
         nav ul li a {
-            color: white;
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            padding: 8px 16px;
+            border-radius: 8px;
         }
 
         nav ul li a:hover {
-            color: yellow;
+            color: #fef08a;
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .user-email {
-            font-size: 14px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-weight: normal;
+            font-size: 13px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
+        /* ─── MAIN LAYOUT CONTAINER ─── */
         .container {
-            width: 90%;
-            margin: auto;
+            width: 95%;
+            max-width: 1400px;
+            margin: 30px auto;
         }
 
-        h1 {
-            text-align: center;
-            margin-top: 30px;
-            color: #0d6efd;
+        /* QUICK TRACKING CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
-        #crudSection {
-            margin-top: 40px;
+        .stat-card {
             background: white;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px gray;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-card .stat-title {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .stat-card .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin: 5px 0;
+        }
+
+        .stat-card .stat-desc {
+            font-size: 12px;
+            color: #10b981;
+            font-weight: 500;
+        }
+
+        /* CONTENT WORKSPACE GRID */
+        .main-workspace {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-workspace {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ─── MAIN DISPLAY CARD ─── */
+        #crudSection {
+            background: white;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            min-height: 450px;
+        }
+
+        .section-header {
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-header h2 {
+            color: #1e293b;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        /* SIDEBAR PANELS */
+        .sidebar-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-box {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+        }
+
+        .info-box h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-box ul {
+            list-style-position: inside;
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .info-box ul li {
+            margin-bottom: 8px;
+        }
+
+        /* ─── ACTION BUTTON CARDS ─── */
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        .action-card:hover {
+            transform: translateY(-4px);
+            border-color: #cbd5e1;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+        .action-card h4 {
+            color: #1e3a8a;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .action-card p {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 15px;
+            min-height: 36px;
         }
 
         button {
             padding: 10px 20px;
-            margin: 5px;
-            background: #0d6efd;
+            background: #2563eb;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        button:hover { background: #1d4ed8; }
+        .btn-back { background: #64748b; width: auto; }
+        .btn-back:hover { background: #475569; }
+        .btn-save { background: #16a34a; }
+        .btn-save:hover { background: #15803d; }
+        .btn-delete { background: #dc2626; }
+        .btn-delete:hover { background: #b91c1c; }
+
+        /* ─── FORM & INPUT LAYOUTS ─── */
+        .form-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .field-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .field-box label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        input[type="text"], input[type="number"], select {
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #f8fafc;
+            width: 100%;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2563eb;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .toggle-wrapper {
+            display: flex;
+            align-items: center;
+            margin-top: 30px;
             cursor: pointer;
         }
 
-        button:hover {
-            background: #084298;
+        .toggle-wrapper input {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            accent-color: #2563eb;
         }
 
-        input, select {
-            padding: 10px;
-            margin: 5px;
-            width: 250px;
+        /* ─── RE-DESIGNED DATA TABLE ─── */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            margin-top: 15px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        table, tr, th, td {
-            border: 1px solid gray;
         }
 
         th {
-            background: #0d6efd;
-            color: white;
+            background: #f1f5f9;
+            color: #475569;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            padding: 14px;
+            border-bottom: 2px solid #e2e8f0;
         }
 
-        th, td {
-            padding: 10px;
-            text-align: center;
+        td {
+            padding: 14px;
+            font-size: 14px;
+            background: white;
+            border-bottom: 1px solid #f1f5f9;
         }
+
+        tr:hover td { background: #f8fafc; }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .bg-pub { background: #dcfce7; color: #16a34a; }
+        .bg-priv { background: #fee2e2; color: #dc2626; }
+
+        /* DYNAMIC APP ALERTS */
+        .msg-box {
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 15px;
+            display: none;
+        }
+        .msg-ok { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .msg-err { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
     </style>
 </head>
 
 <body>
 
     <nav>
-        <h2>FitLog Workout Routine Panel</h2>
+        <h2>⚡ FitLog Workspace Panel</h2>
         <ul>
-            <li><span id="nav-email" class="user-email">Logged in as: </span></li>
+            <li><span id="nav-email" class="user-email">Welcome back! </span></li>
             <li><a href="Dashboard.html">🏠 Dashboard Hub</a></li>
             <li><a href="#" onclick="logout()">Logout</a></li>
         </ul>
     </nav>
 
     <div class="container">
-        <h1>WORKOUT ROUTINE MANAGEMENT</h1>
-
-        <div id="crudSection">
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-title">Server Sync</span>
+                <span class="stat-value" style="font-size:15px; word-break:break-all; color:#475569; margin: 8px 0;">Connected to Cloud</span>
+                <span class="stat-desc" style="color:#2563eb;">● App is fully live</span>
             </div>
+            <div class="stat-card">
+                <span class="stat-title">Profile Security</span>
+                <span class="stat-value" style="font-size:17px; margin: 10px 0;">Logged in via Token</span>
+                <span class="stat-desc">● Safe and secure session</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-title">Workout Manager</span>
+                <span class="stat-value">Active Panel</span>
+                <span class="stat-desc">Ready to setup plans</span>
+            </div>
+        </div>
+
+        <div class="main-workspace">
+            
+            <div id="crudSection">
+                </div>
+
+            <div class="sidebar-panel">
+                <div class="info-box" style="background: linear-gradient(to bottom right, #ffffff, #eff6ff);">
+                    <h3>💡 Quick Tips</h3>
+                    <ul>
+                        <li><b>Add Plan:</b> Creates a shiny new routine entry inside your active tracker account.</li>
+                        <li><b>View All:</b> Fetches your complete routine list saved on the server cloud.</li>
+                        <li><b>Editing Data:</b> Use Update to replace the full item, or Modify to edit just single lines.</li>
+                    </ul>
+                </div>
+                
+                <div class="info-box">
+                    <h3>📋 Plan Properties</h3>
+                    <p style="font-size: 13px; color: #64748b; margin-bottom: 8px;">Each routine plan contains these fields:</p>
+                    <ul style="list-style: none;">
+                        <li>🔢 <b>Plan ID:</b> A unique number key</li>
+                        <li>🏷️ <b>Title Name:</b> Title or focus area</li>
+                        <li>📊 <b>Difficulty:</b> Target fitness level tier</li>
+                        <li>🌍 <b>Visibility:</b> Shared or private flag</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
     </div>
 
     <script>
@@ -139,16 +417,16 @@
         const token = localStorage.getItem('jwt_token');
         const crud = document.getElementById("crudSection");
 
-        // Auth Guard
+        // Auth Guard Check Loop
         document.addEventListener("DOMContentLoaded", function() {
             if (!token) {
                 window.location.href = '../login.html';
             } else {
                 const liveEmail = localStorage.getItem('user_email');
-                const displayName = (liveEmail && liveEmail !== "null" && liveEmail !== "undefined") ? liveEmail : 'Admin';
+                const displayName = (liveEmail && liveEmail !== "null" && liveEmail !== "undefined") ? liveEmail : 'User';
                 document.getElementById('nav-email').textContent = 'Logged in as: ' + displayName;
                 
-                // Startup execution
+                // Initialize home control screen
                 loadWorkoutRoutine();
             }
         });
@@ -160,7 +438,7 @@
             window.location.href = '../login.html';
         }
 
-        // Common API Headers configuration
+        // Shared Auth Header Generation Mapping
         function headers() {
             return {
                 "Content-Type": "application/json",
@@ -168,43 +446,98 @@
             };
         }
 
-        // ─── WORKOUT ROUTINE CRUD OPERATIONS ───
+        function triggerUINotifier(targetStatus, textMessage) {
+            const okMsg = document.getElementById("success");
+            const errMsg = document.getElementById("error");
+            if(targetStatus === "ok") {
+                okMsg.innerHTML = textMessage;
+                okMsg.style.display = "block";
+                errMsg.style.display = "none";
+            } else {
+                errMsg.innerHTML = textMessage;
+                errMsg.style.display = "block";
+                okMsg.style.display = "none";
+            }
+        }
+
+        // ─── WORKOUT ROUTINE OPERATIONS INTERFACE CONTROL ───
 
         function loadWorkoutRoutine() {
             crud.innerHTML = `
-                <h2 align="center">Workout Routine CRUD</h2>
-                <br>
-                <div style="text-align: center;">
-                    <button onclick="postWorkoutRoutine()">POST</button>
-                    <button onclick="getAllWorkoutRoutine()">GET ALL</button>
-                    <button onclick="getByIdWorkoutRoutine()">GET BY ID</button>
-                    <button onclick="putWorkoutRoutine()">PUT</button>
-                    <button onclick="patchWorkoutRoutine()">PATCH</button>
-                    <button onclick="deleteWorkoutRoutine()">DELETE</button>
+                <div class="section-header">
+                    <h2>Manage Workout Routines</h2>
                 </div>
-                <br><br>
-                <div id="output"></div>
+                <div class="btn-grid">
+                    <div class="action-card">
+                        <h4>Add New Plan</h4>
+                        <p>Create and upload a brand new workout program routine.</p>
+                        <button onclick="postWorkoutRoutine()">➕ CREATE PLAN</button>
+                    </div>
+                    <div class="action-card">
+                        <h4>View Routine List</h4>
+                        <p>Pull up all current workout plans saved in your records.</p>
+                        <button onclick="getAllWorkoutRoutine()">📋 VIEW ALL PLANS</button>
+                    </div>
+                    <div class="action-card">
+                        <h4>Find Single Plan</h4>
+                        <p>Look up one specific routine using its unique item ID tag.</p>
+                        <button onclick="getByIdWorkoutRoutine()">🔍 SEARCH BY ID</button>
+                    </div>
+                    <div class="action-card">
+                        <h4>Full Overwrite</h4>
+                        <p>Completely rewrite and replace an existing plan profile.</p>
+                        <button onclick="putWorkoutRoutine()">🔄 UPDATE PLAN</button>
+                    </div>
+                    <div class="action-card">
+                        <h4>Quick Modify</h4>
+                        <p>Make minor adjustments to any single field easily.</p>
+                        <button onclick="patchWorkoutRoutine()">✏️ QUICK EDIT</button>
+                    </div>
+                    <div class="action-card">
+                        <h4>Delete Routine</h4>
+                        <p>Permanently remove a workout plan from your list data.</p>
+                        <button class="btn-delete" onclick="deleteWorkoutRoutine()">🗑️ REMOVE PLAN</button>
+                    </div>
+                </div>
             `;
         }
 
         function postWorkoutRoutine() {
             crud.innerHTML = `
-                <h2>Workout Routine - POST (Add Routine)</h2>
-                <button onclick="loadWorkoutRoutine()">⬅ Back</button>
-                <br><br>
-                <input type="number" id="routineId" placeholder="ID"><br>
-                <input type="text" id="routineTitle" placeholder="Title"><br>
-                <input type="text" id="routineDesc" placeholder="Description"><br>
-                <input type="text" id="routineDifficulty" placeholder="Difficulty Level"><br>
-                <input type="text" id="routineGoal" placeholder="Target Goal"><br>
-                <label style="margin: 5px; display: inline-block;">
-                    <input type="checkbox" id="routineIsPublic" style="width: auto; margin-right: 5px;"> Is Public?
-                </label>
-                <br><br>
-                <button onclick="saveWorkoutRoutineLogic()">Save Routine</button>
-                <br><br>
-                <p id="success" style="color:green; font-weight:bold;"></p>
-                <p id="error" style="color:red; font-weight:bold;"></p>
+                <div class="section-header">
+                    <h2>Add a New Workout Routine Plan</h2>
+                    <button class="btn-back" onclick="loadWorkoutRoutine()">⬅ Go Back</button>
+                </div>
+                <div class="form-layout">
+                    <div class="field-box">
+                        <label>Workout Plan ID</label>
+                        <input type="number" id="routineId" placeholder="Enter a unique number (e.g. 202)">
+                    </div>
+                    <div class="field-box">
+                        <label>Routine Title</label>
+                        <input type="text" id="routineTitle" placeholder="e.g. Full Body Push Day">
+                    </div>
+                    <div class="field-box">
+                        <label>Description / Workout Focus</label>
+                        <input type="text" id="routineDesc" placeholder="Brief info about exercises and sets...">
+                    </div>
+                    <div class="field-box">
+                        <label>Difficulty Tier</label>
+                        <input type="text" id="routineDifficulty" placeholder="e.g. Beginner / Intermediate / Advanced">
+                    </div>
+                    <div class="field-box">
+                        <label>Target Goal / Milestone</label>
+                        <input type="text" id="routineGoal" placeholder="e.g. Build Muscle, Fat Loss, Endurance">
+                    </div>
+                    <div class="field-box">
+                        <label class="toggle-wrapper">
+                            <input type="checkbox" id="routineIsPublic"> Share this routine publicly with others
+                        </label>
+                    </div>
+                </div>
+                <button class="btn-save" onclick="saveWorkoutRoutineLogic()">Save Routine Plan</button>
+                <div id="success" class="msg-box msg-ok"></div>
+                <div id="error" class="msg-box msg-err"></div>
             `;
         }
 
@@ -226,9 +559,7 @@
                 });
 
                 if (response.ok) {
-                    document.getElementById("success").innerHTML = "Routine Saved Successfully 🎉";
-                    document.getElementById("error").innerHTML = "";
-                    // Fields Reset
+                    triggerUINotifier('ok', "Your workout routine has been saved successfully! 🎉");
                     document.getElementById("routineId").value = "";
                     document.getElementById("routineTitle").value = "";
                     document.getElementById("routineDesc").value = "";
@@ -236,32 +567,35 @@
                     document.getElementById("routineGoal").value = "";
                     document.getElementById("routineIsPublic").checked = false;
                 } else {
-                    document.getElementById("error").innerHTML = "Failed to Save Routine ❌";
-                    document.getElementById("success").innerHTML = "";
+                    triggerUINotifier('error', "Server refused to accept the plan data. ❌");
                 }
             } catch (e) {
-                document.getElementById("error").innerHTML = "Server Error ⚠️";
+                triggerUINotifier('error', "Could not connect to network server. ⚠️");
             }
         }
 
         async function getAllWorkoutRoutine() {
             crud.innerHTML = `
-                <h2>Workout Routine - GET ALL</h2>
-                <button onclick="loadWorkoutRoutine()">⬅ Back</button>
-                <br><br>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Title</th>
-                            <th>Description</th>
-                            <th>Difficulty</th>
-                            <th>Target Goal</th>
-                            <th>Public?</th>
-                        </tr>
-                    </thead>
-                    <tbody id="routineTable"></tbody>
-                </table>
+                <div class="section-header">
+                    <h2>Your Saved Workout Routines List</h2>
+                    <button class="btn-back" onclick="loadWorkoutRoutine()">⬅ Go Back</button>
+                </div>
+                <div id="loaderSign" style="text-align:center; padding:30px; font-weight:bold; color:#64748b;">Loading routines list from cloud... please hold...</div>
+                <div class="table-container" id="gridBox" style="display:none;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Plan ID</th>
+                                <th>Workout Title</th>
+                                <th>Description / Focus</th>
+                                <th>Difficulty</th>
+                                <th>Target Goal</th>
+                                <th>Privacy Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="routineTable"></tbody>
+                    </table>
+                </div>
             `;
 
             try {
@@ -270,34 +604,38 @@
                     headers: headers()
                 });
                 const data = await response.json();
+                document.getElementById("loaderSign").style.display = "none";
+                document.getElementById("gridBox").style.display = "block";
+                
                 let rows = "";
                 data.forEach(function (item) {
                     rows += `
                         <tr>
-                            <td>${item.id}</td>
-                            <td>${item.title || "—"}</td>
-                            <td>${item.description || "—"}</td>
-                            <td>${item.difficultyLevel || "—"}</td>
-                            <td>${item.targetGoal || "—"}</td>
-                            <td>${item.isPublic ? "🌍 Yes" : "🔒 No"}</td>
+                            <td><span style="font-weight:700; color:#1e293b;">#${item.id}</span></td>
+                            <td><span style="color:#2563eb; font-weight:600;">${item.title || "—"}</span></td>
+                            <td><span style="color:#475569; font-size:13px;">${item.description || "—"}</span></td>
+                            <td><span style="color:#475569;">${item.difficultyLevel || "—"}</span></td>
+                            <td><span style="color:#0f172a; font-weight:500;">${item.targetGoal || "—"}</span></td>
+                            <td><span class="badge ${item.isPublic ? 'bg-pub' : 'bg-priv'}">${item.isPublic ? "🌍 Public" : "🔒 Private"}</span></td>
                         </tr>
                     `;
                 });
                 document.getElementById("routineTable").innerHTML = rows;
             } catch (e) {
-                alert("Unable to Fetch Routines");
+                document.getElementById("loaderSign").innerHTML = "❌ Failed to load items. Please verify network links.";
             }
         }
 
         function getByIdWorkoutRoutine() {
             crud.innerHTML = `
-                <h2>Workout Routine - GET BY ID</h2>
-                <button onclick="loadWorkoutRoutine()">⬅ Back</button>
-                <br><br>
-                <input type="number" id="searchRoutineId" placeholder="Enter Routine ID">
-                <br><br>
-                <button onclick="searchWorkoutRoutineLogic()">Search</button>
-                <br><br>
+                <div class="section-header">
+                    <h2>Search Single Workout Plan</h2>
+                    <button class="btn-back" onclick="loadWorkoutRoutine()">⬅ Go Back</button>
+                </div>
+                <div style="display: flex; gap: 15px; max-width: 600px; margin-bottom:30px;">
+                    <input type="number" id="searchRoutineId" placeholder="Type the routine plan ID number to find...">
+                    <button onclick="searchWorkoutRoutineLogic()" style="width:160px;">Search Profile</button>
+                </div>
                 <div id="routineResult"></div>
             `;
         }
@@ -314,20 +652,22 @@
                 if (response.ok) {
                     const data = await response.json();
                     document.getElementById("routineResult").innerHTML = `
-                        <table>
-                            <tr><th>ID</th><th>Title</th><th>Description</th><th>Difficulty</th><th>Target Goal</th><th>Public?</th></tr>
-                            <tr>
-                                <td>${data.id}</td>
-                                <td>${data.title || "—"}</td>
-                                <td>${data.description || "—"}</td>
-                                <td>${data.difficultyLevel || "—"}</td>
-                                <td>${data.targetGoal || "—"}</td>
-                                <td>${data.isPublic ? "🌍 Yes" : "🔒 No"}</td>
-                            </tr>
-                        </table>
+                        <div class="table-container">
+                            <table>
+                                <tr><th>Plan ID</th><th>Workout Title</th><th>Description / Focus</th><th>Difficulty</th><th>Target Goal</th><th>Privacy Status</th></tr>
+                                <tr>
+                                    <td><b>#${data.id}</b></td>
+                                    <td><span style="color:#2563eb; font-weight:600;">${data.title || "—"}</span></td>
+                                    <td>${data.description || "—"}</td>
+                                    <td>${data.difficultyLevel || "—"}</td>
+                                    <td>${data.targetGoal || "—"}</td>
+                                    <td><span class="badge ${data.isPublic ? 'bg-pub' : 'bg-priv'}">${data.isPublic ? "🌍 Public" : "🔒 Private"}</span></td>
+                                </tr>
+                            </table>
+                        </div>
                     `;
                 } else {
-                    document.getElementById("routineResult").innerHTML = "<h3 style='color:red;'>Routine Not Found</h3>";
+                    document.getElementById("routineResult").innerHTML = "<div class='msg-box msg-err' style='display:block;'>We couldn't find a workout routine with that specific ID (404 Error)</div>";
                 }
             } catch (e) {
                 alert("Server Error");
@@ -336,22 +676,40 @@
 
         function putWorkoutRoutine() {
             crud.innerHTML = `
-                <h2>Update Workout Routine (PUT)</h2>
-                <button onclick="loadWorkoutRoutine()">⬅ Back</button>
-                <br><br>
-                <input type="number" id="updateRoutineId" placeholder="Enter Routine ID"><br>
-                <input type="text" id="updateRoutineTitle" placeholder="Title"><br>
-                <input type="text" id="updateRoutineDesc" placeholder="Description"><br>
-                <input type="text" id="updateRoutineDifficulty" placeholder="Difficulty Level"><br>
-                <input type="text" id="updateRoutineGoal" placeholder="Target Goal"><br>
-                <label style="margin: 5px; display: inline-block;">
-                    <input type="checkbox" id="updateRoutineIsPublic" style="width: auto; margin-right: 5px;"> Is Public?
-                </label>
-                <br><br>
-                <button onclick="updateWorkoutRoutineLogic()">Update Routine</button>
-                <br><br>
-                <p id="success" style="color:green; font-weight:bold;"></p>
-                <p id="error" style="color:red; font-weight:bold;"></p>
+                <div class="section-header">
+                    <h2>Completely Replace a Routine (Full Update)</h2>
+                    <button class="btn-back" onclick="loadWorkoutRoutine()">⬅ Go Back</button>
+                </div>
+                <div class="form-layout">
+                    <div class="field-box">
+                        <label>Target Routine Plan ID</label>
+                        <input type="number" id="updateRoutineId" placeholder="Enter ID of the routine you want to rewrite">
+                    </div>
+                    <div class="field-box">
+                        <label>New Workout Title</label>
+                        <input type="text" id="updateRoutineTitle" placeholder="Apply new replacing title name">
+                    </div>
+                    <div class="field-box">
+                        <label>New Description / Focus</label>
+                        <input type="text" id="updateRoutineDesc" placeholder="Apply new exercise details info">
+                    </div>
+                    <div class="field-box">
+                        <label>New Difficulty Tier</label>
+                        <input type="text" id="updateRoutineDifficulty" placeholder="Apply fresh difficulty rating level">
+                    </div>
+                    <div class="field-box">
+                        <label>New Target Goal</label>
+                        <input type="text" id="updateRoutineGoal" placeholder="Apply fresh objective milestone">
+                    </div>
+                    <div class="field-box">
+                        <label class="toggle-wrapper">
+                            <input type="checkbox" id="updateRoutineIsPublic"> Force clear visibility status to Public
+                        </label>
+                    </div>
+                </div>
+                <button class="btn-save" onclick="updateWorkoutRoutineLogic()">Commit Complete Plan Overwrite</button>
+                <div id="success" class="msg-box msg-ok"></div>
+                <div id="error" class="msg-box msg-err"></div>
             `;
         }
 
@@ -371,35 +729,52 @@
                 });
 
                 if (response.ok) {
-                    document.getElementById("success").innerHTML = "Routine Updated Successfully 👍";
-                    document.getElementById("error").innerHTML = "";
+                    triggerUINotifier('ok', "The entire routine dataset was updated successfully! 👍");
                 } else {
-                    document.getElementById("error").innerHTML = "Update Failed ❌";
-                    document.getElementById("success").innerHTML = "";
+                    triggerUINotifier('error', "Failed to update. Server returned a dataset mapping error. ❌");
                 }
             } catch (e) {
-                document.getElementById("error").innerHTML = "Server Error ⚠️";
+                triggerUINotifier('error', "An unexpected system exception occurred. ⚠️");
             }
         }
 
         function patchWorkoutRoutine() {
             crud.innerHTML = `
-                <h2>Modify Workout Routine (PATCH)</h2>
-                <button onclick="loadWorkoutRoutine()">⬅ Back</button>
-                <br><br>
-                <input type="number" id="patchRoutineId" placeholder="Enter Routine ID"><br>
-                <input type="text" id="patchRoutineTitle" placeholder="Title (Optional)"><br>
-                <input type="text" id="patchRoutineDesc" placeholder="Description (Optional)"><br>
-                <input type="text" id="patchRoutineDifficulty" placeholder="Difficulty Level (Optional)"><br>
-                <input type="text" id="patchRoutineGoal" placeholder="Target Goal (Optional)"><br>
-                <label style="margin: 5px; display: inline-block;">
-                    <input type="checkbox" id="patchRoutineIsPublic" style="width: auto; margin-right: 5px;"> Is Public?
-                </label>
-                <br><br>
-                <button onclick="modifyWorkoutRoutineLogic()">Modify Routine</button>
-                <br><br>
-                <p id="success" style="color:green; font-weight:bold;"></p>
-                <p id="error" style="color:red; font-weight:bold;"></p>
+                <div class="section-header">
+                    <h2>Quick Edit Routine Fields (Partial Modify)</h2>
+                    <button class="btn-back" onclick="loadWorkoutRoutine()">⬅ Go Back</button>
+                </div>
+                <p style="color:#64748b; margin-bottom:15px;">Tip: Leave inputs blank if you don't want to change their current values.</p>
+                <div class="form-layout">
+                    <div class="field-box">
+                        <label>Target Routine Plan ID</label>
+                        <input type="number" id="patchRoutineId" placeholder="Enter ID of the item to modify">
+                    </div>
+                    <div class="field-box">
+                        <label>Edit Title Name (Optional)</label>
+                        <input type="text" id="patchRoutineTitle" placeholder="Type new title name or skip">
+                    </div>
+                    <div class="field-box">
+                        <label>Edit Description (Optional)</label>
+                        <input type="text" id="patchRoutineDesc" placeholder="Type new summary text block or skip">
+                    </div>
+                    <div class="field-box">
+                        <label>Edit Difficulty (Optional)</label>
+                        <input type="text" id="patchRoutineDifficulty" placeholder="Type updated difficulty value or skip">
+                    </div>
+                    <div class="field-box">
+                        <label>Edit Target Goal (Optional)</label>
+                        <input type="text" id="patchRoutineGoal" placeholder="Type updated milestone goal or skip">
+                    </div>
+                    <div class="field-box">
+                        <label class="toggle-wrapper">
+                            <input type="checkbox" id="patchRoutineIsPublic"> Override status to Shared Public space
+                        </label>
+                    </div>
+                </div>
+                <button onclick="modifyWorkoutRoutineLogic()">Save Selective Changes</button>
+                <div id="success" class="msg-box msg-ok"></div>
+                <div id="error" class="msg-box msg-err"></div>
             `;
         }
 
@@ -426,28 +801,30 @@
                 });
 
                 if (response.ok) {
-                    document.getElementById("success").innerHTML = "Routine Modified Successfully 👍";
-                    document.getElementById("error").innerHTML = "";
+                    triggerUINotifier('ok', "Your selective edits were saved successfully! 👍");
                 } else {
-                    document.getElementById("error").innerHTML = "Modification Failed ❌";
-                    document.getElementById("success").innerHTML = "";
+                    triggerUINotifier('error', "Failed to process edits. Input parameters matched wrong data. ❌");
                 }
             } catch (e) {
-                document.getElementById("error").innerHTML = "Server Error ⚠️";
+                triggerUINotifier('error', "Communication error while editing. ⚠️");
             }
         }
 
         function deleteWorkoutRoutine() {
             crud.innerHTML = `
-                <h2>Delete Workout Routine 🗑️</h2>
-                <button onclick="loadWorkoutRoutine()">⬅ Back</button>
-                <br><br>
-                <input type="number" id="deleteRoutineId" placeholder="Enter Routine ID">
-                <br><br>
-                <button onclick="removeWorkoutRoutineLogic()">Delete</button>
-                <br><br>
-                <p id="success" style="color:green; font-weight:bold;"></p>
-                <p id="error" style="color:red; font-weight:bold;"></p>
+                <div class="section-header">
+                    <h2>Delete a Workout Plan From Records</h2>
+                    <button class="btn-back" onclick="loadWorkoutRoutine()">⬅ Go Back</button>
+                </div>
+                <div style="max-width: 500px; margin-bottom:20px;">
+                    <div class="field-box">
+                        <label>Enter Routine Plan ID to Delete</label>
+                        <input type="number" id="deleteRoutineId" placeholder="Type the numeric plan ID row to completely erase">
+                    </div>
+                </div>
+                <button class="btn-delete" onclick="removeWorkoutRoutineLogic()">Permanently Erase Plan</button>
+                <div id="success" class="msg-box msg-ok"></div>
+                <div id="error" class="msg-box msg-err"></div>
             `;
         }
 
@@ -455,7 +832,7 @@
             const id = document.getElementById("deleteRoutineId").value;
             if(!id) return alert("Please enter a Routine ID to delete!");
 
-            if(!confirm("Are you sure you want to delete this workout routine?")) return;
+            if(!confirm("Are you 100% sure you want to permanently erase this workout routine plan? This action cannot be undone.")) return;
 
             try {
                 const response = await fetch(API + "/workout-routine/" + id, {
@@ -464,15 +841,13 @@
                 });
 
                 if (response.ok) {
-                    document.getElementById("success").innerHTML = "Routine Deleted Successfully 🧹";
-                    document.getElementById("error").innerHTML = "";
+                    triggerUINotifier('ok', "Workout plan successfully deleted and cleared from files. 🧹");
                     document.getElementById("deleteRoutineId").value = "";
                 } else {
-                    document.getElementById("error").innerHTML = "Delete Failed ❌";
-                    document.getElementById("success").innerHTML = "";
+                    triggerUINotifier('error', "Process failed. That plan ID number was not found. ❌");
                 }
             } catch (e) {
-                document.getElementById("error").innerHTML = "Server Error ⚠️";
+                triggerUINotifier('error', "Network timeout. Connection dropped. ⚠️");
             }
         }
     </script>
