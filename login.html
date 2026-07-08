@@ -5,162 +5,202 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FitLog - Login</title>
     <style>
+        /* ─── MODERN RESET & THEME VARIABLES ─── */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            color: #f1f5f9;
         }
 
-        /* நேவிகேஷன் பார் */
+        /* ─── PREMIUM NAVIGATION BAR ─── */
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #ffffff;
-            padding: 15px 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
+            padding: 16px 5%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 800;
-            color: #4a90e2;
-            letter-spacing: 0.5px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
         }
 
         .home-btn {
             text-decoration: none;
-            color: #333;
+            color: #ffffff;
             font-weight: 600;
-            padding: 8px 16px;
+            font-size: 14px;
+            padding: 8px 18px;
             border-radius: 20px;
-            background-color: #f0f2f5;
-            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .home-btn:hover {
-            background-color: #4a90e2;
-            color: white;
+            color: #fef08a;
+            background-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
         }
 
-        /* லாகின் கார்டு */
+        /* ─── CENTRALIZED WORKSPACE CONTAINER ─── */
         .login-container {
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 40px 20px;
         }
 
         .login-card {
-            background: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            background: #111827;
+            padding: 45px 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
             width: 100%;
-            max-width: 400px;
+            max-width: 440px;
             text-align: center;
+            border: 1px solid #1f2937;
+            border-top: 4px solid #2563eb; /* Top highlight color matched with navbar */
         }
 
         .login-card h1 {
-            color: #333;
+            color: #ffffff;
             margin-bottom: 8px;
-            font-size: 28px;
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
 
         .subtitle {
-            color: #666;
+            color: #94a3b8;
             font-size: 14px;
             margin-bottom: 30px;
+            font-weight: 500;
         }
 
+        /* ─── MODERN FORM FIELDS ─── */
         .input-group {
             margin-bottom: 20px;
         }
 
         .input-group input {
             width: 100%;
-            padding: 14px;
-            border: 1px solid #ddd;
+            padding: 14px 16px;
+            border: 1px solid #374151;
             border-radius: 8px;
-            font-size: 16px;
-            background-color: #f9f9f9;
-            transition: all 0.3s ease;
+            font-size: 14px;
+            background-color: #1f2937;
+            color: #ffffff;
+            transition: all 0.2s ease;
             outline: none;
         }
 
-        .input-group input:focus {
-            border-color: #4a90e2;
-            background-color: #fff;
-            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
+        .input-group input::placeholder {
+            color: #64748b;
         }
 
+        .input-group input:focus {
+            border-color: #2563eb;
+            background-color: #111827;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+        }
+
+        /* ─── ACTION BUTTON ─── */
         #login-btn {
             width: 100%;
             padding: 14px;
-            background-color: #4a90e2;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 700;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-top: 10px;
+            transition: all 0.2s ease;
+            margin-top: 5px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
         }
 
         #login-btn:hover {
-            background-color: #357abd;
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
         }
 
         #login-btn:disabled {
-            background-color: #a0c4ed;
+            background: #1e293b;
+            color: #64748b;
             cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+            border: 1px solid #374151;
         }
 
+        /* ─── STATUS NOTIFICATIONS ─── */
         .error-message {
-            color: #d9534f;
-            background-color: #fdf7f7;
-            border: 1px solid #ecd5d5;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 15px;
+            color: #ef4444;
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
             font-size: 14px;
+            font-weight: 600;
             display: none;
+            text-align: left;
         }
 
+        /* ─── FORM FOOTER ─── */
         .form-footer {
             margin-top: 25px;
+            border-top: 1px solid #1f2937;
+            padding-top: 20px;
         }
 
         .form-footer a {
-            color: #666;
+            color: #94a3b8;
             text-decoration: none;
             font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s ease;
         }
 
         .form-footer a span {
-            color: #4a90e2;
-            font-weight: 600;
+            color: #38bdf8; /* Bright energetic accent link */
+            font-weight: 700;
+            margin-left: 3px;
         }
 
         .form-footer a:hover span {
             text-decoration: underline;
+            color: #7dd3fc;
         }
     </style>
 </head>
 <body>
 
     <header class="navbar">
-        <div class="logo">FitLog</div>
+        <div class="logo">⚡ FitLog</div>
         <nav>
             <a href="index.html" class="nav-link home-btn">🏠 Home</a>
         </nav>
@@ -169,7 +209,7 @@
     <main class="login-container">
         <div class="login-card">
             <h1>Welcome Back</h1>
-            <p class="subtitle">Please login to your account</p>
+            <p class="subtitle">Please login to your tracker account</p>
 
             <form id="login-form">
                 <div class="input-group">
@@ -233,7 +273,7 @@
                 localStorage.setItem("role", data.role);
 
                 alert("Login Successful!");
-                window.location.href = "Dashboard.html";
+                window.location.href = "dashboard.html";
 
             } catch (err) {
                 errorDiv.textContent = "Cannot connect to backend.";
