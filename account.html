@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>FitLog Premier - Workout & Admin Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            color: #1e293b;
+            scroll-behavior: smooth;
+        }
+
+        /* 1. Global Navigation Bar */
+        nav {
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 18px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        nav h2 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: #ff4757;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            align-items: center;
+        }
+
+        nav ul li {
+            margin-left: 25px;
+        }
+
+        nav ul li a {
+            color: #f1f5f9;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #ff4757;
+        }
+
+        .user-email {
+            font-size: 13px;
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 71, 87, 0.4);
+            font-weight: 600;
+        }
+
+        /* 2. Heavy Visual Gym Hero Showcase Banner with Background Image */
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.85)), url('https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 120px 5%;
+            text-align: center;
+            border-bottom: 5px solid #ff4757;
+        }
+
+        .hero-section h1 {
+            font-size: 46px;
+            font-weight: 800;
+            margin-bottom: 18px;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .hero-section p {
+            font-size: 19px;
+            color: #f1f5f9;
+            max-width: 750px;
+            margin: 0 auto 30px auto;
+            line-height: 1.6;
+            text-shadow: 0 1px 5px rgba(0,0,0,0.5);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: #ff4757;
+            color: white;
+            padding: 6px 18px;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(255, 71, 87, 0.4);
+        }
+
+        /* Main Scrollable Content Wrapper */
+        .wrapper {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 0;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: #64748b;
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        /* 3. Features Cards Grid Layout with Workout Images */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 70px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-bottom: 4px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-bottom-color: #ff4757;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+        }
+
+        .feature-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .feature-content {
+            padding: 25px;
+        }
+
+        .feature-content h3 {
+            font-size: 20px;
+            color: #0f172a;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-content p {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* 4. Large Mid-page Split Visual Promotion Row */
+        .promo-banner {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #111827;
+            color: white;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 70px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .promo-text {
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .promo-text h2 {
+            font-size: 26px;
+            margin-bottom: 15px;
+            color: #ff4757;
+        }
+
+        .promo-text p {
+            color: #94a3b8;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .promo-img {
+            background: url('https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=800&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            min-height: 320px;
+        }
+
+        /* 5. Live Fitness Sync Metrics Table */
+        .metrics-section {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            margin-bottom: 70px;
+        }
+
+        .metrics-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .metrics-table th {
+            background: #f8fafc;
+            color: #475569;
+            text-align: left;
+            font-size: 13px;
+            text-transform: uppercase;
+            font-weight: 700;
+            padding: 16px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .metrics-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+            color: #334155;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            background: #22c55e;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        /* 6. LAST ELEMENT: Pure Core CRUD Control Box Dappa */
+        #crudSection {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0;
+        }
+
+        #crudSection h2 {
+            font-size: 24px;
+            color: #0f172a;
+            margin-bottom: 25px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .crud-actions-wrapper {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px dashed #cbd5e1;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 12px 28px;
+            margin: 6px;
+            background: #111827;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: #ff4757;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+        }
+
+        /* Control Input Forms configuration inside Dappa */
+        input, select {
+            padding: 14px;
+            margin: 12px 0;
+            width: 100%;
+            max-width: 380px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            display: block;
+            background: #fff;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #ff4757;
+            box-shadow: 0 0 0 4px rgba(255, 71, 87, 0.15);
+        }
+
+        /* Output Response Display Tables inside CRUD Box */
+        .crud-result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            font-size: 14px;
+        }
+
+        .crud-result-table th {
+            background: #111827;
+            color: white;
+            font-weight: 700;
+            padding: 14px;
+        }
+
+        .crud-result-table td {
+            padding: 14px;
+            border-bottom: 1px solid #cbd5e1;
+            text-align: center;
+            background: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <h2>FitLog Hub</h2>
+        <ul>
+            <li><span id="nav-email" class="user-email">Logged in as: </span></li>
+            <li><a href="Dashboard.html">🏠 Main Dashboard</a></li>
+            <li><a href="login.html "onclick="logout()">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero-section">
+        <div class="hero-badge" id="web-role">FITNESS ACCOUNT</div>
+        <h1 id="hero-welcome">FitLog Gym & Workout Administration Portal</h1>
+        <p>Track elite member logs, allocate personal trainers, and manage targeted workout charts smoothly using active local persistence frameworks.</p>
+    </div>
+
+    <div class="wrapper">
+
+        <div class="section-title">FitLog Core Roster Analytics</div>
+        <div class="section-subtitle">A simple overview of modular entities handling workout patterns and nutrition tracks.</div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=400&auto=format&fit=crop" alt="Workout">
+                <div class="feature-content">
+                    <h3>🏋️ Workout Plans</h3>
+                    <p>Build custom strength training charts, rep counts, and personalized body recovery milestones for registered student profiles.</p>
+                </div>
+            </div>
+            
+            <div class="feature-card">
+                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=400&auto=format&fit=crop" alt="Nutrition">
+                <div class="feature-content">
+                    <h3>🥗 Diet Logs</h3>
+                    <p>Monitor consistent daily macro calorie counts, high protein nutrition targets, and hydration logs inside member records.</p>
+                </div>
+            </div>
+            
+            
+          <!-- Card 3 with Pure Gym Exercise Tools Imagery -->
+            <div class="feature-card">
+                <img src="https://images.unsplash.com/photo-1638536532686-d610adfc8e5c?q=80&w=400&auto=format&fit=crop&v=2026" alt="Gym Exercise Tools">
+                <div class="feature-content">
+                    <h3>👥 Pro Trainers</h3>
+                    <p>Map certified fitness instructors to beginner tiers. Oversee active rosters and daily tracking parameters smoothly.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Exercise Equipment & Workout Track Metrics Panel -->
+        <div class="promo-banner" style="display: grid; grid-template-columns: 1fr 1fr; background: #111827; color: white; border-radius: 16px; overflow: hidden; margin-bottom: 70px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+            <div class="promo-text" style="padding: 50px; display: flex; flex-direction: column; justify-content: center;">
+                <h2>Track Every Drop of Sweat with FitLog</h2>
+                <p>No more messy notebooks or forgotten workout sets. FitLog helps gym members log their absolute best performance effortlessly. From recording your heavy deadlifts to tracking your daily clean diet goals, everything is neatly organized so you can focus entirely on crushing your next PR!</p>
+            </div>
+            
+            <!-- Real Exercise Tool Metrics Analytics Graphics Render Block -->
+            <div style="background: #1f2937; padding: 40px; display: flex; flex-direction: column; justify-content: center; gap: 20px; border-left: 4px solid #ff4757;">
+                <h4 style="color: #94a3b8; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">⚡ Live Exercise Counter Tools</h4>
+                
+                <!-- Tool Item 1: Heavy Dumbbell Tracking -->
+                <div style="background: #111827; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #374151;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 24px;">🏋️</span>
+                        <div>
+                            <div style="font-weight: 600; font-size: 14px; color: #f1f5f9;">Dumbbell Progressive Load</div>
+                            <div style="font-size: 12px; color: #64748b;">Target Volume Intensity</div>
+                        </div>
+                    </div>
+                    <div style="background: rgba(255, 71, 87, 0.15); color: #ff4757; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 13px;">32.5 KG</div>
+                </div>
+
+                <!-- Tool Item 2: Heart Rate Pulse Track -->
+                <div style="background: #111827; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #374151;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 24px;">❤️‍🔥</span>
+                        <div>
+                            <div style="font-weight: 600; font-size: 14px; color: #f1f5f9;">Active Cardiopulmonary Pulse</div>
+                            <div style="font-size: 12px; color: #64748b;">Fat Burn Zone Threshold</div>
+                        </div>
+                    </div>
+                    <div style="background: rgba(34, 197, 94, 0.15); color: #22c55e; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 13px;">142 BPM</div>
+                </div>
+
+                <!-- Tool Item 3: Hydration Track Meter -->
+                <div style="background: #111827; padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #374151;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 24px;">🥤</span>
+                        <div>
+                            <div style="font-weight: 600; font-size: 14px; color: #f1f5f9;">Hydration Intake Target</div>
+                            <div style="font-size: 12px; color: #64748b;">Daily Optimal Water Balance</div>
+                        </div>
+                    </div>
+                    <div style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 13px;">2.8 / 4L</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">Live Application Synchronization</div>
+        <div class="section-subtitle">Real-time validation tracking status between user interactions and local tables.</div>
+        
+        <div class="metrics-section">
+            <table class="metrics-table">
+                <thead>
+                    <tr>
+                        <th>Subsystem Component</th>
+                        <th>Active Path Link</th>
+                        <th>API Transaction Status</th>
+                        <th>Network Sync Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>FitLog Core Node</strong></td>
+                        <td>/account/* Workout Routes</td>
+                        <td><span class="status-dot"></span> Active Connected</td>
+                        <td><span style="color:#22c55e; font-weight:700;">99.8% Online</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Trainer Session Portal</strong></td>
+                        <td>Local Bearer Security Token</td>
+                        <td><span class="status-dot"></span> Authorization Secure</td>
+                        <td><span style="color:#22c55e; font-weight:700;">Active Guard</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section-title">Administrative Member Console</div>
+        <div class="section-subtitle">Scroll down here to execute core database transactions across the roster records list.</div>
+        
+        <div id="crudSection">
+            </div>
+
+    </div>
+
+    <script>
+        const API = 'https://fullstackbackend-1-j1pu.onrender.com';
+        const token = localStorage.getItem('jwt_token');
+        const crud = document.getElementById("crudSection");
+
+        // Auth Routing Verification Protection Guard
+        document.addEventListener("DOMContentLoaded", function() {
+            if (!token) {
+                window.location.href = '../login.html';
+            } else {
+                const liveEmail = localStorage.getItem('user_email');
+                const liveRole = localStorage.getItem('role') || 'STUDENT';
+                const displayName = (liveEmail && liveEmail !== "null" && liveEmail !== "undefined") ? liveEmail : 'Admin';
+                document.getElementById('nav-email').textContent = 'Logged in as: ' + displayName;
+                
+                // Content UI Bindings
+                document.getElementById('hero-welcome').textContent = "Welcome back, " + displayName.split('@')[0].toUpperCase();
+                document.getElementById('web-role').textContent = liveRole.replace('ROLE_', '') + " ACCESS PORTAL";
+                
+                // Boot buttons grid block layout inside target container dappa box at the bottom
+                loadSystemAccount();
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('jwt_token');
+            localStorage.removeItem('user_email');
+            localStorage.removeItem('role');
+            window.location.href = '../login.html';
+        }
+
+        function headers() {
+            return {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            };
+        }
+
+        // ─── IMMUTABLE CRUD APP LOGIC & INTERFACE FORMS ENGINE ───
+
+        function loadSystemAccount() {
+            crud.innerHTML = `
+                <h2 align="center">FitLog Database Control Center</h2>
+                <div class="crud-actions-wrapper">
+                    <button onclick="postSystemAccount()">POST (Add Account)</button>
+                    <button onclick="getAllSystemAccount()">GET ALL (View Roster)</button>
+                    <button onclick="getByIdSystemAccount()">GET BY ID (Search Member)</button>
+                    <button onclick="putSystemAccount()">PUT (Full Update)</button>
+                    <button onclick="patchSystemAccount()">PATCH (Quick Edit)</button>
+                    <button onclick="deleteSystemAccount()">DELETE (Remove Account)</button>
+                </div>
+                <div id="output"></div>
+            `;
+        }
+
+        function postSystemAccount() {
+            crud.innerHTML = `
+                <h2>FitLog Core Systems - POST (Insert Profile)</h2>
+                <button onclick="loadSystemAccount()">⬅️ Back to Control Center</button>
+                <br><br>
+                <input type="text" id="username" placeholder="Enter Full Username">
+                <input type="email" id="email" placeholder="Enter Email Address">
+                <input type="password" id="password" placeholder="Assign Secure Password">
+                <select id="role">
+                    <option value="ADMIN">ADMINISTRATOR</option>
+                    <option value="TRAINER">ATHLETIC TRAINER</option>
+                    <option value="USER">STUDENT PROFILE</option>
+                </select>
+                <br>
+                <button onclick="saveSystemAccount()">Commit Registration</button>
+                <br><br>
+                <p id="success" style="color:#16a34a; font-weight:bold;"></p>
+                <p id="error" style="color:#dc2626; font-weight:bold;"></p>
+            `;
+        }
+
+        async function saveSystemAccount() {
+            const username = document.getElementById("username").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+            const role = document.getElementById("role").value;
+
+            if(!username || !email || !password) return alert("Fill all fields!");
+
+            try {
+                const response = await fetch(API + "/account/postData", {
+                    method: "POST",
+                    headers: headers(),
+                    body: JSON.stringify({ username, email, password, role })
+                });
+
+                if (response.ok) {
+                    document.getElementById("success").innerHTML = "Database Commit Successful 🎉 Member record saved.";
+                    document.getElementById("error").innerHTML = "";
+                    document.getElementById("username").value = "";
+                    document.getElementById("email").value = "";
+                    document.getElementById("password").value = "";
+                } else {
+                    document.getElementById("error").innerHTML = "Operation Failed ❌ Parameters rejected.";
+                    document.getElementById("success").innerHTML = "";
+                }
+            } catch (e) {
+                document.getElementById("error").innerHTML = "Server Communications Fault ⚠️ Connection dropped.";
+            }
+        }
+
+        async function getAllSystemAccount() {
+            crud.innerHTML = `
+                <h2>FitLog Core Systems - GET ALL (View Full Roster)</h2>
+                <button onclick="loadSystemAccount()">⬅️ Back to Control Center</button>
+                <br><br>
+                <table class="crud-result-table">
+                    <thead>
+                        <tr>
+                            <th>Member ID</th>
+                            <th>Username</th>
+                            <th>Email Link</th>
+                            <th>Clearance Role</th>
+                        </tr>
+                    </thead>
+                    <tbody id="accountTable"></tbody>
+                </table>
+            `;
+
+            try {
+                const response = await fetch(API + "/account/get", {
+                    method: "GET",
+                    headers: headers()
+                });
+                const data = await response.json();
+                let rows = "";
+                data.forEach(function (item) {
+                    rows += `
+                        <tr>
+                            <td><strong>#${item.id}</strong></td>
+                            <td>${item.username}</td>
+                            <td>${item.email}</td>
+                            <td><span class="user-email" style="font-size:11px; padding:3px 8px;">${item.role}</span></td>
+                        </tr>
+                    `;
+                });
+                document.getElementById("accountTable").innerHTML = rows;
+            } catch (e) {
+                alert("Unable to Fetch Target Table Entities");
+            }
+        }
+
+        function getByIdSystemAccount() {
+            crud.innerHTML = `
+                <h2>FitLog Core Systems - GET BY ID (Point Query)</h2>
+                <button onclick="loadSystemAccount()">⬅️ Back to Control Center</button>
+                <br><br>
+                <input type="number" id="searchId" placeholder="Enter Member Primary ID">
+                <br>
+                <button onclick="searchSystemAccount()">Execute Query</button>
+                <br><br>
+                <div id="result"></div>
+            `;
+        }
+
+        async function searchSystemAccount() {
+            const id = document.getElementById("searchId").value;
+            if(!id) return alert("Please specify a target record ID");
+            
+            try {
+                const response = await fetch(API + "/account/get/" + id, {
+                    method: "GET",
+                    headers: headers()
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById("result").innerHTML = `
+                        <table class="crud-result-table">
+                            <tr><th>Member ID</th><th>Username</th><th>Email Link</th><th>Clearance Role</th></tr>
+                            <tr><td><strong>#${data.id}</strong></td><td>${data.username}</td><td>${data.email}</td><td>${data.role}</td></tr>
+                        </table>
+                    `;
+                } else {
+                    document.getElementById("result").innerHTML = "<h3 style='color:#dc2626; margin-top:15px;'>Entity Missing: ID Record Not Found</h3>";
+                }
+            } catch (e) {
+                alert("Server Context Resolution Error");
+            }
+        }
+
+        function putSystemAccount() {
+            crud.innerHTML = `
+                <h2>FitLog Core Systems - PUT (Full Table Replace)</h2>
+                <button onclick="loadSystemAccount()">⬅️ Back to Control Center</button>
+                <br><br>
+                <input type="number" id="updateId" placeholder="Enter Member ID to Overwrite"><br>
+                <input type="text" id="updateUsername" placeholder="New Account Username">
+                <input type="email" id="updateEmail" placeholder="New Account Email">
+                <input type="password" id="updatePassword" placeholder="New Account Password">
+                <select id="updateRole">
+                    <option value="ADMIN">ADMINISTRATOR</option>
+                    <option value="TRAINER">ATHLETIC TRAINER</option>
+                    <option value="STUDENT">STUDENT PROFILE</option>
+                </select>
+                <br>
+                <button onclick="updateSystemAccountLogic()">Execute PUT Overwrite</button>
+                <br><br>
+                <p id="success" style="color:#16a34a; font-weight:bold;"></p>
+                <p id="error" style="color:#dc2626; font-weight:bold;"></p>
+            `;
+        }
+
+        async function updateSystemAccountLogic() {
+            const id = document.getElementById("updateId").value;
+            const username = document.getElementById("updateUsername").value;
+            const email = document.getElementById("updateEmail").value;
+            const password = document.getElementById("updatePassword").value;
+            const role = document.getElementById("updateRole").value;
+
+            try {
+                const response = await fetch(API + "/account/get/" + id, {
+                    method: "PUT",
+                    headers: headers(),
+                    body: JSON.stringify({ username, email, password, role })
+                });
+
+                if (response.ok) {
+                    document.getElementById("success").innerHTML = "Member Record Replaced Successfully (PUT Core Complete)";
+                    document.getElementById("error").innerHTML = "";
+                } else {
+                    document.getElementById("error").innerHTML = "Replacement Failed ❌ Modification parameters rejected.";
+                    document.getElementById("success").innerHTML = "";
+                }
+            } catch (e) {
+                document.getElementById("error").innerHTML = "Transactional Infrastructure Error ⚠️";
+            }
+        }
+
+        function patchSystemAccount() {
+            crud.innerHTML = `
+                <h2>FitLog Core Systems - PATCH (Quick Column Merge)</h2>
+                <button onclick="loadSystemAccount()">⬅️ Back to Control Center</button>
+                <br><br>
+                <input type="number" id="patchId" placeholder="Enter Target Member ID"><br>
+                <input type="text" id="patchUsername" placeholder="Modify Username (Optional)">
+                <input type="email" id="patchEmail" placeholder="Modify Email (Optional)">
+                <input type="password" id="patchPassword" placeholder="Modify Password (Optional)">
+                <select id="patchRole">
+                    <option value="ADMIN">ADMINISTRATOR</option>
+                    <option value="TRAINER">ATHLETIC TRAINER</option>
+                    <option value="STUDENT">STUDENT PROFILE</option>
+                </select>
+                <br>
+                <button onclick="patchAccountLogic()">Execute Patch Merge</button>
+                <br><br>
+                <p id="success" style="color:#16a34a; font-weight:bold;"></p>
+                <p id="error" style="color:#dc2626; font-weight:bold;"></p>
+            `;
+        }
+
+        async function patchAccountLogic() {
+            const id = document.getElementById("patchId").value;
+            const username = document.getElementById("patchUsername").value;
+            const email = document.getElementById("patchEmail").value;
+            const password = document.getElementById("patchPassword").value;
+            const role = document.getElementById("patchRole").value;
+
+            try {
+                const response = await fetch(API + "/account/get/" + id, {
+                    method: "PATCH",
+                    headers: headers(),
+                    body: JSON.stringify({ username, email, password, role })
+                });
+
+                if (response.ok) {
+                    document.getElementById("success").innerHTML = "Fields Merged and Patched Successfully 👍";
+                    document.getElementById("error").innerHTML = "";
+                } else {
+                    document.getElementById("error").innerHTML = "Partial Patch Failed ❌ Validation violation.";
+                    document.getElementById("success").innerHTML = "";
+                }
+            } catch (e) {
+                document.getElementById("error").innerHTML = "Transactional Error ⚠️";
+            }
+        }
+
+        function deleteSystemAccount() {
+            crud.innerHTML = `
+                <h2>FitLog Core Systems - DELETE (Purge Member Profile) 🗑️</h2>
+                <button onclick="loadSystemAccount()">⬅️ Back to Control Center</button>
+                <br><br>
+                <input type="number" id="deleteId" placeholder="Enter Member ID to Delete">
+                <br><br>
+                <button onclick="removeSystemAccount()" style="background:#dc2626;">Execute Member Account Purge</button>
+                <br><br>
+                <p id="success" style="color:#16a34a; font-weight:bold;"></p>
+                <p id="error" style="color:#dc2626; font-weight:bold;"></p>
+            `;
+        }
+
+        async function removeSystemAccount() {
+            const id = document.getElementById("deleteId").value;
+            if(!id) return alert("Target ID parameter must be passed!");
+            
+            if(!confirm("Are you sure you want to permanently delete this member profile from FitLog records?")) return;
+
+            try {
+                const response = await fetch(API + "/account/" + id, {
+                    method: "DELETE",
+                    headers: headers()
+                });
+
+                if (response.ok) {
+                    document.getElementById("success").innerHTML = "Member Profile Permanently Removed 🧹";
+                    document.getElementById("error").innerHTML = "";
+                    document.getElementById("deleteId").value = "";
+                } else {
+                    document.getElementById("error").innerHTML = "Destructive Request Rejected ❌ Access level mismatch.";
+                    document.getElementById("success").innerHTML = "";
+                }
+            } catch (e) {
+                document.getElementById("error").innerHTML = "Communications Pipeline Failure ⚠️";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>FitLog - Routine Exercise Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+        }
+
+        nav {
+            background: #0d6efd;
+            color: white;
+            padding: 18px;
+        }
+
+        nav h2 {
+            display: inline;
+        }
+
+        nav ul {
+            list-style: none;
+            float: right;
+            display: flex;
+            align-items: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-left: 25px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav ul li a:hover {
+            color: yellow;
+        }
+
+        .user-email {
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: normal;
+        }
+
+        .container {
+            width: 90%;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+            color: #0d6efd;
+        }
+
+        #crudSection {
+            margin-top: 40px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #084298;
+        }
+
+        input, select {
+            padding: 10px;
+            margin: 5px;
+            width: 250px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, tr, th, td {
+            border: 1px solid gray;
+        }
+
+        th {
+            background: #0d6efd;
+            color: white;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <h2>FitLog Routine Exercise Panel</h2>
+        <ul>
+            <li><span id="nav-email" class="user-email">Logged in as: </span></li>
+            <li><a href="Dashboard.html">🏠 Dashboard Hub</a></li>
+            <li><a href="#" onclick="logout()">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>ROUTINE EXERCISE MANAGEMENT</h1>
+
+        <div id="crudSection">
+            </div>
+    </div>
+
+    <script>
+        const API = 'https://fullstackbackend-1-j1pu.onrender.com';
+        const token = localStorage.getItem('jwt_token');
+        const crud = document.getElementById("crudSection");
+
+        // Auth Guard
+        document.addEventListener("DOMContentLoaded", function() {
+            if (!token) {
+                window.location.href = '../login.html';
+            } else {
+                const liveEmail = localStorage.getItem('user_email');
+                const displayName = (liveEmail && liveEmail !== "null" && liveEmail !== "undefined") ? liveEmail : 'Admin';
+                document.getElementById('nav-email').textContent = 'Logged in as: ' + displayName;
+                
+                // Load routine exercise CRUD grid on startup
+                loadRoutineExercise();
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('jwt_token');
+            localStorage.removeItem('user_email');
+            localStorage.removeItem('role');
+            window.location.href = '../login.html';
+        }
+
+        function headers() {
+            return {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            };
+        }
+
+        // ─── ROUTINE EXERCISE CRUD VIEWS & OPERATIONS ───
+
+        function loadRoutineExercise() {
+            crud.innerHTML = `
+                <h2 align="center">Routine Exercise CRUD</h2>
+                <br>
+                <div style="text-align: center;">
+                    <button onclick="postRoutineExercise()">POST</button>
+                    <button onclick="getAllRoutineExercise()">GET ALL</button>
+                    <button onclick="getByIdRoutineExercise()">GET BY ID</button>
+                    <button onclick="putRoutineExercise()">PUT</button>
+                    <button onclick="patchRoutineExercise()">PATCH</button>
+                    <button onclick="deleteRoutineExercise()">DELETE</button>
+                </div>
+                <br><br>
+                <div id="output"></div>
+            `;
+        }
+
+        function postRoutineExercise() {
+            crud.innerHTML = `
+                <h2>Routine Exercise - POST (Add Exercise)</h2>
+                <button onclick="loadRoutineExercise()">⬅️ Back</button>
+                <br><br>
+                <input type="number" id="userid" placeholder="Id"><br>
+                <input type="text" id="exName" placeholder="Exercise Name"><br>
+                <input type="number" id="exTargetSets" placeholder="Target Sets"><br>
+                <input type="number" id="exTargetReps" placeholder="Target Reps"><br>
+                <input type="number" step="0.01" id="exTargetWeight" placeholder="Target Weight (Kg)"><br>
+                <input type="number" id="exRestDuration" placeholder="Rest Duration (Seconds)"><br>
+                <br>
+                <button onclick="saveRoutineExercise()">Save Exercise</button>
+                <br><br>
+                <p id="success" style="color:green; font-weight:bold;"></p>
+                <p id="error" style="color:red; font-weight:bold;"></p>
+            `;
+        }
+
+        async function saveRoutineExercise() {
+            const id = document.getElementById("userid").value;
+            const exerciseName = document.getElementById("exName").value.trim();
+            const targetSets = parseInt(document.getElementById("exTargetSets").value);
+            const targetReps = parseInt(document.getElementById("exTargetReps").value);
+            const targetWeightKg = parseFloat(document.getElementById("exTargetWeight").value);
+            const restDurationSeconds = parseInt(document.getElementById("exRestDuration").value);
+
+            if(!id || !exerciseName) return alert("Please fill ID and Exercise Name!");
+
+            try {
+                const response = await fetch(API + "/routine/postData", {
+                    method: "POST",
+                    headers: headers(),
+                    body: JSON.stringify({ id, exerciseName, targetSets, targetReps, targetWeightKg, restDurationSeconds })
+                });
+
+                if (response.ok) {
+                    document.getElementById("success").innerHTML = "Exercise Saved Successfully 🎉";
+                    document.getElementById("error").innerHTML = "";
+                    // Reset inputs
+                    document.getElementById("userid").value = "";
+                    document.getElementById("exName").value = "";
+                    document.getElementById("exTargetSets").value = "";
+                    document.getElementById("exTargetReps").value = "";
+                    document.getElementById("exTargetWeight").value = "";
+                    document.getElementById("exRestDuration").value = "";
+                } else {
+                    document.getElementById("error").innerHTML = "Failed to Save Exercise ❌";
+                    document.getElementById("success").innerHTML = "";
+                }
+            } catch (e) {
+                document.getElementById("error").innerHTML = "Server Error ⚠️";
+            }
+        }
+
+        async function getAllRoutineExercise() {
+            crud.innerHTML = `
+                <h2>Routine Exercise - GET ALL</h2>
+                <button onclick="loadRoutineExercise()">⬅️ Back</button>
+                <br><br>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Exercise Name</th>
+                            <th>Target Sets</th>
+                            <th>Target Reps</th>
+                            <th>Target Weight (Kg)</th>
+                            <th>Rest (Secs)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="exTable"></tbody>
+                </table>
+            `;
+
+            try {
+                const response = await fetch(API + "/routine/get", {
+                    method: "GET",
+                    headers: headers()
+                });
+                const data = await response.json();
+                let rows = "";
+                data.forEach(function (item) {
+                    rows += `
+                        <tr>
+                            <td>${item.id}</td>
+                            <td>${item.exerciseName}</td>
+                            <td>${item.targetSets}</td>
+                            <td>${item.targetReps}</td>
+                            <td>${item.targetWeightKg} kg</td>
+                            <td>${item.restDurationSeconds}s</td>
+                        </tr>
+                    `;
+                });
+                document.getElementById("exTable").innerHTML = rows;
+            } catch (e) {
+                alert("Unable to Fetch Routine Exercises");
+            }
+        }
+
+        function getByIdRoutineExercise() {
+            crud.innerHTML = `
+                <h2>Routine Exercise - GET BY ID</h2>
+                <button onclick="loadRoutineExercise()">⬅️ Back</button>
+                <br><br>
+                <input type="number" id="searchExId" placeholder="Enter Exercise ID">
+                <br><br>
+                <button onclick="searchRoutineExercise()">Search</button>
+                <br><br>
+                <div id="exResult"></div>
+            `;
+        }
+
+        async function searchRoutineExercise() {
+            const id = document.getElementById("searchExId").value;
+            if (!id) return alert("Please enter an ID");
+
+            try {
+                const response = await fetch(API + "/routine/get/" + id, {
+                    method: "GET",
+                    headers: headers()
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById("exResult").innerHTML = `
+                        <table>
+                            <tr><th>ID</th><th>Exercise Name</th><th>Target Sets</th><th>Target Reps</th><th>Target Weight</th><th>Rest</th></tr>
+                            <tr>
+                                <td>${data.id}</td>
+                                <td>${data.exerciseName}</td>
+                                <td>${data.targetSets}</td>
+                                <td>${data.targetReps}</td>
+                                <td>${data.targetWeightKg} kg</td>
+                                <td>${data.restDurationSeconds}s</td>
+                            </tr>
+                        </table>
+                    `;
+                } else {
+                    document.getElementById("exResult").innerHTML = "<h3 style='color:red;'>Exercise Not Found</h3>";
+                }
+            } catch (e) {
+                alert("Server Error");
+            }
+        }
+
+        font
+        function putRoutineExercise() {
+            crud.innerHTML = `
+                <h2>Update Routine Exercise (PUT)</h2>
+                <button onclick="loadRoutineExercise()">⬅️ Back</button>
+                <br><br>
+                <input type="number" id="updateExId" placeholder="Enter Exercise ID"><br>
+                <input type="text" id="updateExName" placeholder="Exercise Name"><br>
+                <input type="number" id="updateExSets" placeholder="Target Sets"><br>
+                <input type="number" id="updateExReps" placeholder="Target Reps"><br>
+                <input type="number" step="0.01" id="updateExWeight" placeholder="Target Weight (Kg)"><br>
+                <input type="number" id="updateExRest" placeholder="Rest Duration (Seconds)"><br>
+                <br>
+                <button onclick="updateRoutineExerciseLogic()">Update Exercise</button>
+                <br><br>
+                <p id="success" style="color:green; font-weight:bold;"></p>
+                <p id="error" style="color:red; font-weight:bold;"></p>
+            `;
+        }
+
+        async function updateRoutineExerciseLogic() {
+            const id = document.getElementById("updateExId").value;
+            const exerciseName = document.getElementById("updateExName").value.trim();
+            const targetSets = parseInt(document.getElementById("updateExSets").value);
+            const targetReps = parseInt(document.getElementById("updateExReps").value);
+            const targetWeightKg = parseFloat(document.getElementById("updateExWeight").value);
+            const restDurationSeconds = parseInt(document.getElementById("updateExRest").value);
+
+            try {
+                const response = await fetch(API + "/routine/get/" + id, {
+                    method: "PUT",
+                    headers: headers(),
+                    body: JSON.stringify({ exerciseName, targetSets, targetReps, targetWeightKg, restDurationSeconds })
+                });
+
+                if (response.ok) {
+                    document.getElementById("success").innerHTML = "Exercise Updated Successfully 👍";
+                    document.getElementById("error").innerHTML = "";
+                } else {
+                    document.getElementById("error").innerHTML = "Update Failed ❌";
+                    document.getElementById("success").innerHTML = "";
+                }
+            } catch (e) {
+                document.getElementById("error").innerHTML = "Server Error ⚠️";
+            }
+        }
+
+        function patchRoutineExercise() {
+            crud.innerHTML = `
+                <h2>Modify Routine Exercise (PATCH)</h2>
+                <button onclick="loadRoutineExercise()">⬅️ Back</button>
+                <br><br>
+                <input type="number" id="patchExId" placeholder="Enter Exercise ID"><br>
+                <input type="text" id="patchExName" placeholder="Exercise Name (Optional)"><br>
+                <input type="number" id="patchExSets" placeholder="Target Sets (Optional)"><br>
+                <input type="number" id="patchExReps" placeholder="Target Reps (Optional)"><br>
+                <input type="number" step="0.01" id="patchExWeight" placeholder="Target Weight (Kg) (Optional)"><br>
+                <input type="number" id="patchExRest" placeholder="Rest Duration (Seconds) (Optional)"><br>
+                <br>
+                <button onclick="modifyRoutineExerciseLogic()">Modify Exercise</button>
+                <br><br>
+                <p id="success" style="color:green; font-weight:bold;"></p>
+                <p id="error" style="color:red; font-weight:bold;"></p>
+            `;
+        }
+
+        async function modifyRoutineExerciseLogic() {
+            const id = document.getElementById("patchExId").value;
+            const exerciseName = document.getElementById("patchExName").value.trim();
+            const setsInput = document.getElementById("patchExSets").value;
+            const repsInput = document.getElementById("patchExReps").value;
+            const weightInput = document.getElementById("patchExWeight").value;
+            const restInput = document.getElementById("patchExRest").value;
+
+            const bodyData = {};
+            if (exerciseName) bodyData.exerciseName = exerciseName;
+            if (setsInput) bodyData.targetSets = parseInt(setsInput);
+            if (repsInput) bodyData.targetReps = parseInt(repsInput);
+            if (weightInput) bodyData.targetWeightKg = parseFloat(weightInput);
+            if (restInput) bodyData.restDurationSeconds = parseInt(restInput);
+
+            try {
+                const response = await fetch(API + "/routine/get/" + id, {
+                    method: "PATCH",
+                    headers: headers(),
+                    body: JSON.stringify(bodyData)
+                });
+
+                if (response.ok) {
+                    document.getElementById("success").innerHTML = "Exercise Modified Successfully 👍";
+                    document.getElementById("error").innerHTML = "";
+                } else {
+                    document.getElementById("error").innerHTML = "Modification Failed ❌";
+                    document.getElementById("success").innerHTML = "";
+                }
+            } catch (e) {
+                document.getElementById("error").innerHTML = "Server Error ⚠️";
+            }
+        }
+
+        function deleteRoutineExercise() {
+            crud.innerHTML = `
+                <h2>Delete Routine Exercise 🗑️</h2>
+                <button onclick="loadRoutineExercise()">⬅️ Back</button>
+                <br><br>
+                <input type="number" id="deleteExId" placeholder="Enter Exercise ID">
+                <br><br>
+                <button onclick="removeRoutineExercise()">Delete</button>
+                <br><br>
+                <p id="success" style="color:green; font-weight:bold;"></p>
+                <p id="error" style="color:red; font-weight:bold;"></p>
+            `;
+        }
+
+        async function removeRoutineExercise() {
+            const id = document.getElementById("deleteExId").value;
+            if(!id) return alert("Please enter an ID to delete!");
+
+            if(!confirm("Are you sure you want to delete this routine exercise?")) return;
+
+            try {
+                const response = await fetch(API + "/routine/" + id, {
+                    method: "DELETE",
+                    headers: headers()
+                });
+
+                if (response.ok) {
+                    document.getElementById("success").innerHTML = "Exercise Deleted Successfully 🧹";
+                    document.getElementById("error").innerHTML = "";
+                    document.getElementById("deleteExId").value = "";
+                } else {
+                    document.getElementById("error").innerHTML = "Delete Failed ❌";
+                    document.getElementById("success").innerHTML = "";
+                }
+            } catch (e) {
+                document.getElementById("error").innerHTML = "Server Error ⚠️";
+            }
+        }
+    </script>
+</body>
+</html>

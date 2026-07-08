@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>FitLog - Workout Routine Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+        }
+
+        nav {
+            background: #0d6efd;
+            color: white;
+            padding: 18px;
+        }
+
+        nav h2 {
+            display: inline;
+        }
+
+        nav ul {
+            list-style: none;
+            float: right;
+            display: flex;
+            align-items: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-left: 25px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav ul li a:hover {
+            color: yellow;
+        }
+
+        .user-email {
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: normal;
+        }
+
+        .container {
+            width: 90%;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+            color: #0d6efd;
+        }
+
+        #crudSection {
+            margin-top: 40px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #084298;
+        }
+
+        input, select {
+            padding: 10px;
+            margin: 5px;
+            width: 250px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, tr, th, td {
+            border: 1px solid gray;
+        }
+
+        th {
+            background: #0d6efd;
+            color: white;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <h2>FitLog Workout Routine Panel</h2>
+        <ul>
+            <li><span id="nav-email" class="user-email">Logged in as: </span></li>
+            <li><a href="Dashboard.html">🏠 Dashboard Hub</a></li>
+            <li><a href="#" onclick="logout()">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>WORKOUT ROUTINE MANAGEMENT</h1>
+
+        <div id="crudSection">
+            </div>
+    </div>
+
+    <script>
+        const API = 'https://fullstackbackend-1-j1pu.onrender.com';
+        const token = localStorage.getItem('jwt_token');
+        const crud = document.getElementById("crudSection");
+
+        // Auth Guard
+        document.addEventListener("DOMContentLoaded", function() {
+            if (!token) {
+                window.location.href = '../login.html';
+            } else {
+                const liveEmail = localStorage.getItem('user_email');
+                const displayName = (liveEmail && liveEmail !== "null" && liveEmail !== "undefined") ? liveEmail : 'Admin';
+                document.getElementById('nav-email').textContent = 'Logged in as: ' + displayName;
+                
+                // Startup execution
+                loadWorkoutRoutine();
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('jwt_token');
+            localStorage.removeItem('user_email');
+            localStorage.removeItem('role');
+            window.location.href = '../login.html';
+        }
+
+        // Common API Headers configuration
+        function headers() {
+            return {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            };
+        }
+
+        // ─── WORKOUT ROUTINE CRUD OPERATIONS ───
+
+        function loadWorkoutRoutine() {
+            crud.innerHTML = `
+                <h2 align="center">Workout Routine CRUD</h2>
+                <br>
+                <div style="text-align: center;">
+                    <button onclick="postWorkoutRoutine()">POST</button>
+                    <button onclick="getAllWorkoutRoutine()">GET ALL</button>
+                    <button onclick="getByIdWorkoutRoutine()">GET BY ID</button>
+                    <button onclick="putWorkoutRoutine()">PUT</button>
+                    <button onclick="patchWorkoutRoutine()">PATCH</button>
+                    <button onclick="deleteWorkoutRoutine()">DELETE</button>
+                </div>
+                <br><br>
+                <div id="output"></div>
+            `;
+        }
+
+        function postWorkoutRoutine() {
+            crud.innerHTML = `
+                <h2>Workout Routine - POST (Add Routine)</h2>
+                <button onclick="loadWorkoutRoutine()">⬅ Back</button>
+                <br><br>
+                <input type="number" id="routineId" placeholder="ID"><br>
+                <input type="text" id="routineTitle" placeholder="Title"><br>
+                <input type="text" id="routineDesc" placeholder="Description"><br>
+                <input type="text" id="routineDifficulty" placeholder="Difficulty Level"><br>
+                <input type="text" id="routineGoal" placeholder="Target Goal"><br>
+                <label style="margin: 5px; display: inline-block;">
+                    <input type="checkbox" id="routineIsPublic" style="width: auto; margin-right: 5px;"> Is Public?
+                </label>
+                <br><br>
+                <button onclick="saveWorkoutRoutineLogic()">Save Routine</button>
+                <br><br>
+                <p id="success" style="color:green; font-weight:bold;"></p>
+                <p id="error" style="color:red; font-weight:bold;"></p>
+            `;
+        }
+
+        async function saveWorkoutRoutineLogic() {
+            const id = document.getElementById("routineId").value;
+            const title = document.getElementById("routineTitle").value.trim();
+            const description = document.getElementById("routineDesc").value.trim();
+            const difficultyLevel = document.getElementById("routineDifficulty").value.trim();
+            const targetGoal = document.getElementById("routineGoal").value.trim();
+            const isPublic = document.getElementById("routineIsPublic").checked;
+
+            if(!id || !title) return alert("Please fill up the ID and Title fields!");
+
+            try {
+                const response = await fetch(API + "/workout-routine/postData", {
+                    method: "POST",
+                    headers: headers(),
+                    body: JSON.stringify({ id, title, description, difficultyLevel, targetGoal, isPublic })
+                });
+
+                if (response.ok) {
+                    document.getElementById("success").innerHTML = "Routine Saved Successfully 🎉";
+                    document.getElementById("error").innerHTML = "";
+                    // Fields Reset
+                    document.getElementById("routineId").value = "";
+                    document.getElementById("routineTitle").value = "";
+                    document.getElementById("routineDesc").value = "";
+                    document.getElementById("routineDifficulty").value = "";
+                    document.getElementById("routineGoal").value = "";
+                    document.getElementById("routineIsPublic").checked = false;
+                } else {
+                    document.getElementById("error").innerHTML = "Failed to Save Routine ❌";
+                    document.getElementById("success").innerHTML = "";
+                }
+            } catch (e) {
+                document.getElementById("error").innerHTML = "Server Error ⚠️";
+            }
+        }
+
+        async function getAllWorkoutRoutine() {
+            crud.innerHTML = `
+                <h2>Workout Routine - GET ALL</h2>
+                <button onclick="loadWorkoutRoutine()">⬅ Back</button>
+                <br><br>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Difficulty</th>
+                            <th>Target Goal</th>
+                            <th>Public?</th>
+                        </tr>
+                    </thead>
+                    <tbody id="routineTable"></tbody>
+                </table>
+            `;
+
+            try {
+                const response = await fetch(API + "/workout-routine/get", {
+                    method: "GET",
+                    headers: headers()
+                });
+                const data = await response.json();
+                let rows = "";
+                data.forEach(function (item) {
+                    rows += `
+                        <tr>
+                            <td>${item.id}</td>
+                            <td>${item.title || "—"}</td>
+                            <td>${item.description || "—"}</td>
+                            <td>${item.difficultyLevel || "—"}</td>
+                            <td>${item.targetGoal || "—"}</td>
+                            <td>${item.isPublic ? "🌍 Yes" : "🔒 No"}</td>
+                        </tr>
+                    `;
+                });
+                document.getElementById("routineTable").innerHTML = rows;
+            } catch (e) {
+                alert("Unable to Fetch Routines");
+            }
+        }
+
+        function getByIdWorkoutRoutine() {
+            crud.innerHTML = `
+                <h2>Workout Routine - GET BY ID</h2>
+                <button onclick="loadWorkoutRoutine()">⬅ Back</button>
+                <br><br>
+                <input type="number" id="searchRoutineId" placeholder="Enter Routine ID">
+                <br><br>
+                <button onclick="searchWorkoutRoutineLogic()">Search</button>
+                <br><br>
+                <div id="routineResult"></div>
+            `;
+        }
+
+        async function searchWorkoutRoutineLogic() {
+            const id = document.getElementById("searchRoutineId").value;
+            if (!id) return alert("Please enter an ID");
+
+            try {
+                const response = await fetch(API + "/workout-routine/get/" + id, {
+                    method: "GET",
+                    headers: headers()
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById("routineResult").innerHTML = `
+                        <table>
+                            <tr><th>ID</th><th>Title</th><th>Description</th><th>Difficulty</th><th>Target Goal</th><th>Public?</th></tr>
+                            <tr>
+                                <td>${data.id}</td>
+                                <td>${data.title || "—"}</td>
+                                <td>${data.description || "—"}</td>
+                                <td>${data.difficultyLevel || "—"}</td>
+                                <td>${data.targetGoal || "—"}</td>
+                                <td>${data.isPublic ? "🌍 Yes" : "🔒 No"}</td>
+                            </tr>
+                        </table>
+                    `;
+                } else {
+                    document.getElementById("routineResult").innerHTML = "<h3 style='color:red;'>Routine Not Found</h3>";
+                }
+            } catch (e) {
+                alert("Server Error");
+            }
+        }
+
+        function putWorkoutRoutine() {
+            crud.innerHTML = `
+                <h2>Update Workout Routine (PUT)</h2>
+                <button onclick="loadWorkoutRoutine()">⬅ Back</button>
+                <br><br>
+                <input type="number" id="updateRoutineId" placeholder="Enter Routine ID"><br>
+                <input type="text" id="updateRoutineTitle" placeholder="Title"><br>
+                <input type="text" id="updateRoutineDesc" placeholder="Description"><br>
+                <input type="text" id="updateRoutineDifficulty" placeholder="Difficulty Level"><br>
+                <input type="text" id="updateRoutineGoal" placeholder="Target Goal"><br>
+                <label style="margin: 5px; display: inline-block;">
+                    <input type="checkbox" id="updateRoutineIsPublic" style="width: auto; margin-right: 5px;"> Is Public?
+                </label>
+                <br><br>
+                <button onclick="updateWorkoutRoutineLogic()">Update Routine</button>
+                <br><br>
+                <p id="success" style="color:green; font-weight:bold;"></p>
+                <p id="error" style="color:red; font-weight:bold;"></p>
+            `;
+        }
+
+        async function updateWorkoutRoutineLogic() {
+            const id = document.getElementById("updateRoutineId").value;
+            const title = document.getElementById("updateRoutineTitle").value.trim();
+            const description = document.getElementById("updateRoutineDesc").value.trim();
+            const difficultyLevel = document.getElementById("updateRoutineDifficulty").value.trim();
+            const targetGoal = document.getElementById("updateRoutineGoal").value.trim();
+            const isPublic = document.getElementById("updateRoutineIsPublic").checked;
+
+            try {
+                const response = await fetch(API + "/workout-routine/get/" + id, {
+                    method: "PUT",
+                    headers: headers(),
+                    body: JSON.stringify({ title, description, difficultyLevel, targetGoal, isPublic })
+                });
+
+                if (response.ok) {
+                    document.getElementById("success").innerHTML = "Routine Updated Successfully 👍";
+                    document.getElementById("error").innerHTML = "";
+                } else {
+                    document.getElementById("error").innerHTML = "Update Failed ❌";
+                    document.getElementById("success").innerHTML = "";
+                }
+            } catch (e) {
+                document.getElementById("error").innerHTML = "Server Error ⚠️";
+            }
+        }
+
+        function patchWorkoutRoutine() {
+            crud.innerHTML = `
+                <h2>Modify Workout Routine (PATCH)</h2>
+                <button onclick="loadWorkoutRoutine()">⬅ Back</button>
+                <br><br>
+                <input type="number" id="patchRoutineId" placeholder="Enter Routine ID"><br>
+                <input type="text" id="patchRoutineTitle" placeholder="Title (Optional)"><br>
+                <input type="text" id="patchRoutineDesc" placeholder="Description (Optional)"><br>
+                <input type="text" id="patchRoutineDifficulty" placeholder="Difficulty Level (Optional)"><br>
+                <input type="text" id="patchRoutineGoal" placeholder="Target Goal (Optional)"><br>
+                <label style="margin: 5px; display: inline-block;">
+                    <input type="checkbox" id="patchRoutineIsPublic" style="width: auto; margin-right: 5px;"> Is Public?
+                </label>
+                <br><br>
+                <button onclick="modifyWorkoutRoutineLogic()">Modify Routine</button>
+                <br><br>
+                <p id="success" style="color:green; font-weight:bold;"></p>
+                <p id="error" style="color:red; font-weight:bold;"></p>
+            `;
+        }
+
+        async function modifyWorkoutRoutineLogic() {
+            const id = document.getElementById("patchRoutineId").value;
+            const title = document.getElementById("patchRoutineTitle").value.trim();
+            const description = document.getElementById("patchRoutineDesc").value.trim();
+            const difficultyLevel = document.getElementById("patchRoutineDifficulty").value.trim();
+            const targetGoal = document.getElementById("patchRoutineGoal").value.trim();
+            const isPublic = document.getElementById("patchRoutineIsPublic").checked;
+
+            const bodyData = {};
+            if (title) bodyData.title = title;
+            if (description) bodyData.description = description;
+            if (difficultyLevel) bodyData.difficultyLevel = difficultyLevel;
+            if (targetGoal) bodyData.targetGoal = targetGoal;
+            bodyData.isPublic = isPublic;
+
+            try {
+                const response = await fetch(API + "/workout-routine/get/" + id, {
+                    method: "PATCH",
+                    headers: headers(),
+                    body: JSON.stringify(bodyData)
+                });
+
+                if (response.ok) {
+                    document.getElementById("success").innerHTML = "Routine Modified Successfully 👍";
+                    document.getElementById("error").innerHTML = "";
+                } else {
+                    document.getElementById("error").innerHTML = "Modification Failed ❌";
+                    document.getElementById("success").innerHTML = "";
+                }
+            } catch (e) {
+                document.getElementById("error").innerHTML = "Server Error ⚠️";
+            }
+        }
+
+        function deleteWorkoutRoutine() {
+            crud.innerHTML = `
+                <h2>Delete Workout Routine 🗑️</h2>
+                <button onclick="loadWorkoutRoutine()">⬅ Back</button>
+                <br><br>
+                <input type="number" id="deleteRoutineId" placeholder="Enter Routine ID">
+                <br><br>
+                <button onclick="removeWorkoutRoutineLogic()">Delete</button>
+                <br><br>
+                <p id="success" style="color:green; font-weight:bold;"></p>
+                <p id="error" style="color:red; font-weight:bold;"></p>
+            `;
+        }
+
+        async function removeWorkoutRoutineLogic() {
+            const id = document.getElementById("deleteRoutineId").value;
+            if(!id) return alert("Please enter a Routine ID to delete!");
+
+            if(!confirm("Are you sure you want to delete this workout routine?")) return;
+
+            try {
+                const response = await fetch(API + "/workout-routine/" + id, {
+                    method: "DELETE",
+                    headers: headers()
+                });
+
+                if (response.ok) {
+                    document.getElementById("success").innerHTML = "Routine Deleted Successfully 🧹";
+                    document.getElementById("error").innerHTML = "";
+                    document.getElementById("deleteRoutineId").value = "";
+                } else {
+                    document.getElementById("error").innerHTML = "Delete Failed ❌";
+                    document.getElementById("success").innerHTML = "";
+                }
+            } catch (e) {
+                document.getElementById("error").innerHTML = "Server Error ⚠️";
+            }
+        }
+    </script>
+</body>
+</html>

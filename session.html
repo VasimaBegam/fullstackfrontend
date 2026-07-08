@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>FitLog - Workout Session Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+        }
+
+        nav {
+            background: #0d6efd;
+            color: white;
+            padding: 18px;
+        }
+
+        nav h2 {
+            display: inline;
+        }
+
+        nav ul {
+            list-style: none;
+            float: right;
+            display: flex;
+            align-items: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-left: 25px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav ul li a:hover {
+            color: yellow;
+        }
+
+        .user-email {
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: normal;
+        }
+
+        .container {
+            width: 90%;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+            color: #0d6efd;
+        }
+
+        #crudSection {
+            margin-top: 40px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #084298;
+        }
+
+        input, select {
+            padding: 10px;
+            margin: 5px;
+            width: 250px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, tr, th, td {
+            border: 1px solid gray;
+        }
+
+        th {
+            background: #0d6efd;
+            color: white;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <h2>FitLog Workout Session Panel</h2>
+        <ul>
+            <li><span id="nav-email" class="user-email">Logged in as: </span></li>
+            <li><a href="Dashboard.html">🏠 Dashboard Hub</a></li>
+            <li><a href="#" onclick="logout()">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>WORKOUT SESSION MANAGEMENT</h1>
+
+        <div id="crudSection">
+            </div>
+    </div>
+
+    <script>
+        const API = 'https://fullstackbackend-1-j1pu.onrender.com';
+        const token = localStorage.getItem('jwt_token');
+        const crud = document.getElementById("crudSection");
+
+        // Auth Guard
+        document.addEventListener("DOMContentLoaded", function() {
+            if (!token) {
+                window.location.href = '../login.html';
+            } else {
+                const liveEmail = localStorage.getItem('user_email');
+                const displayName = (liveEmail && liveEmail !== "null" && liveEmail !== "undefined") ? liveEmail : 'Admin';
+                document.getElementById('nav-email').textContent = 'Logged in as: ' + displayName;
+                
+                // Startup execution
+                loadWorkoutSession();
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('jwt_token');
+            localStorage.removeItem('user_email');
+            localStorage.removeItem('role');
+            window.location.href = '../login.html';
+        }
+
+        // Common API Headers configuration
+        function headers() {
+            return {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            };
+        }
+
+        // ─── WORKOUT SESSION CRUD OPERATIONS ───
+
+        function loadWorkoutSession() {
+            crud.innerHTML = `
+                <h2 align="center">Workout Session CRUD</h2>
+                <br>
+                <div style="text-align: center;">
+                    <button onclick="postWorkoutSession()">POST</button>
+                    <button onclick="getAllWorkoutSession()">GET ALL</button>
+                    <button onclick="getByIdWorkoutSession()">GET BY ID</button>
+                    <button onclick="putWorkoutSession()">PUT</button>
+                    <button onclick="patchWorkoutSession()">PATCH</button>
+                    <button onclick="deleteWorkoutSession()">DELETE</button>
+                </div>
+                <br><br>
+                <div id="output"></div>
+            `;
+        }
+
+        function postWorkoutSession() {
+            crud.innerHTML = `
+                <h2>Workout Session - POST (Add Session)</h2>
+                <button onclick="loadWorkoutSession()">⬅ Back</button>
+                <br><br>
+                <input type="number" id="sessionId" placeholder="ID"><br>
+                <input type="text" id="sessionRoutineTitle" placeholder="Routine Title"><br>
+                
+                <label style="margin: 5px; display: inline-block; font-size: 14px; color: gray;">Scheduled Date:</label><br>
+                <input type="date" id="sessionScheduledDate"><br>
+                
+                <label style="margin: 5px; display: inline-block; font-size: 14px; color: gray;">Started At:</label><br>
+                <input type="datetime-local" id="sessionStartedAt"><br>
+                
+                <label style="margin: 5px; display: inline-block; font-size: 14px; color: gray;">Completed At:</label><br>
+                <input type="datetime-local" id="sessionCompletedAt"><br>
+                
+                <input type="text" id="sessionStatus" placeholder="Session Status (e.g., Completed, Active)"><br>
+                <input type="number" id="sessionFatigue" placeholder="Fatigue Score (1-10)"><br>
+                <br>
+                <button onclick="saveWorkoutSession()">Save Session</button>
+                <br><br>
+                <p id="success" style="color:green; font-weight:bold;"></p>
+                <p id="error" style="color:red; font-weight:bold;"></p>
+            `;
+        }
+
+        async function saveWorkoutSession() {
+            const id = document.getElementById("sessionId").value;
+            const routineTitle = document.getElementById("sessionRoutineTitle").value.trim();
+            const scheduledDate = document.getElementById("sessionScheduledDate").value;
+            const startedAt = document.getElementById("sessionStartedAt").value;
+            const completedAt = document.getElementById("sessionCompletedAt").value;
+            const sessionStatus = document.getElementById("sessionStatus").value.trim();
+            const fatigueScore = parseInt(document.getElementById("sessionFatigue").value);
+
+            if(!id || !routineTitle) return alert("Please fill up the ID and Routine Title field!");
+
+            try {
+                const response = await fetch(API + "/workout-session/postData", {
+                    method: "POST",
+                    headers: headers(),
+                    body: JSON.stringify({ id, routineTitle, scheduledDate, startedAt, completedAt, sessionStatus, fatigueScore })
+                });
+
+                if (response.ok) {
+                    document.getElementById("success").innerHTML = "Session Saved Successfully 🎉";
+                    document.getElementById("error").innerHTML = "";
+                    // Input elements reset config
+                    document.getElementById("sessionId").value = "";
+                    document.getElementById("sessionRoutineTitle").value = "";
+                    document.getElementById("sessionScheduledDate").value = "";
+                    document.getElementById("sessionStartedAt").value = "";
+                    document.getElementById("sessionCompletedAt").value = "";
+                    document.getElementById("sessionStatus").value = "";
+                    document.getElementById("sessionFatigue").value = "";
+                } else {
+                    document.getElementById("error").innerHTML = "Failed to Save Session ❌";
+                    document.getElementById("success").innerHTML = "";
+                }
+            } catch (e) {
+                document.getElementById("error").innerHTML = "Server Error ⚠️";
+            }
+        }
+
+        async function getAllWorkoutSession() {
+            crud.innerHTML = `
+                <h2>Workout Session - GET ALL</h2>
+                <button onclick="loadWorkoutSession()">⬅ Back</button>
+                <br><br>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Routine Title</th>
+                            <th>Scheduled Date</th>
+                            <th>Started At</th>
+                            <th>Completed At</th>
+                            <th>Status</th>
+                            <th>Fatigue Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sessionTable"></tbody>
+                </table>
+            `;
+
+            try {
+                const response = await fetch(API + "/workout-session/get", {
+                    method: "GET",
+                    headers: headers()
+                });
+                const data = await response.json();
+                let rows = "";
+                data.forEach(function (item) {
+                    rows += `
+                        <tr>
+                            <td>${item.id}</td>
+                            <td>${item.routineTitle || "—"}</td>
+                            <td>${item.scheduledDate || "—"}</td>
+                            <td>${item.startedAt ? item.startedAt.replace("T", " ") : "—"}</td>
+                            <td>${item.completedAt ? item.completedAt.replace("T", " ") : "—"}</td>
+                            <td>${item.sessionStatus || "—"}</td>
+                            <td>${item.fatigueScore || 0}</td>
+                        </tr>
+                    `;
+                });
+                document.getElementById("sessionTable").innerHTML = rows;
+            } catch (e) {
+                alert("Unable to Fetch Sessions");
+            }
+        }
+
+        function getByIdWorkoutSession() {
+            crud.innerHTML = `
+                <h2>Workout Session - GET BY ID</h2>
+                <button onclick="loadWorkoutSession()">⬅ Back</button>
+                <br><br>
+                <input type="number" id="searchSessionId" placeholder="Enter Session ID">
+                <br><br>
+                <button onclick="searchWorkoutSession()">Search</button>
+                <br><br>
+                <div id="sessionResult"></div>
+            `;
+        }
+
+        async function searchWorkoutSession() {
+            const id = document.getElementById("searchSessionId").value;
+            if (!id) return alert("Please enter an ID");
+
+            try {
+                const response = await fetch(API + "/workout-session/get/" + id, {
+                    method: "GET",
+                    headers: headers()
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById("sessionResult").innerHTML = `
+                        <table>
+                            <tr><th>ID</th><th>Routine Title</th><th>Scheduled Date</th><th>Started At</th><th>Completed At</th><th>Status</th><th>Fatigue</th></tr>
+                            <tr>
+                                <td>${data.id}</td>
+                                <td>${data.routineTitle || "—"}</td>
+                                <td>${data.scheduledDate || "—"}</td>
+                                <td>${data.startedAt ? data.startedAt.replace("T", " ") : "—"}</td>
+                                <td>${data.completedAt ? data.completedAt.replace("T", " ") : "—"}</td>
+                                <td>${data.sessionStatus || "—"}</td>
+                                <td>${data.fatigueScore || 0}</td>
+                            </tr>
+                        </table>
+                    `;
+                } else {
+                    document.getElementById("sessionResult").innerHTML = "<h3 style='color:red;'>Session Not Found</h3>";
+                }
+            } catch (e) {
+                alert("Server Error");
+            }
+        }
+
+        function putWorkoutSession() {
+            crud.innerHTML = `
+                <h2>Update Workout Session (PUT)</h2>
+                <button onclick="loadWorkoutSession()">⬅ Back</button>
+                <br><br>
+                <input type="number" id="updateSessionId" placeholder="Enter Session ID"><br>
+                <input type="text" id="updateSessionRoutineTitle" placeholder="Routine Title"><br>
+                
+                <label style="margin: 5px; display: inline-block; font-size: 14px; color: gray;">Scheduled Date:</label><br>
+                <input type="date" id="updateSessionScheduledDate"><br>
+                
+                <label style="margin: 5px; display: inline-block; font-size: 14px; color: gray;">Started At:</label><br>
+                <input type="datetime-local" id="updateSessionStartedAt"><br>
+                
+                <label style="margin: 5px; display: inline-block; font-size: 14px; color: gray;">Completed At:</label><br>
+                <input type="datetime-local" id="updateSessionCompletedAt"><br>
+                
+                <input type="text" id="updateSessionStatus" placeholder="Session Status"><br>
+                <input type="number" id="updateSessionFatigue" placeholder="Fatigue Score (1-10)"><br>
+                <br>
+                <button onclick="updateWorkoutSessionLogic()">Update Session</button>
+                <br><br>
+                <p id="success" style="color:green; font-weight:bold;"></p>
+                <p id="error" style="color:red; font-weight:bold;"></p>
+            `;
+        }
+
+        async function updateWorkoutSessionLogic() {
+            const id = document.getElementById("updateSessionId").value;
+            const routineTitle = document.getElementById("updateSessionRoutineTitle").value.trim();
+            const scheduledDate = document.getElementById("updateSessionScheduledDate").value;
+            const startedAt = document.getElementById("updateSessionStartedAt").value;
+            const completedAt = document.getElementById("updateSessionCompletedAt").value;
+            const sessionStatus = document.getElementById("updateSessionStatus").value.trim();
+            const fatigueScore = parseInt(document.getElementById("updateSessionFatigue").value);
+
+            try {
+                const response = await fetch(API + "/workout-session/get/" + id, {
+                    method: "PUT",
+                    headers: headers(),
+                    body: JSON.stringify({ routineTitle, scheduledDate, startedAt, completedAt, sessionStatus, fatigueScore })
+                });
+
+                if (response.ok) {
+                    document.getElementById("success").innerHTML = "Session Updated Successfully 👍";
+                    document.getElementById("error").innerHTML = "";
+                } else {
+                    document.getElementById("error").innerHTML = "Update Failed ❌";
+                    document.getElementById("success").innerHTML = "";
+                }
+            } catch (e) {
+                document.getElementById("error").innerHTML = "Server Error ⚠️";
+            }
+        }
+
+        function patchWorkoutSession() {
+            crud.innerHTML = `
+                <h2>Modify Workout Session (PATCH)</h2>
+                <button onclick="loadWorkoutSession()">⬅ Back</button>
+                <br><br>
+                <input type="number" id="patchSessionId" placeholder="Enter Session ID"><br>
+                <input type="text" id="patchSessionRoutineTitle" placeholder="Routine Title (Optional)"><br>
+                
+                <label style="margin: 5px; display: inline-block; font-size: 14px; color: gray;">Scheduled Date (Optional):</label><br>
+                <input type="date" id="patchSessionScheduledDate"><br>
+                
+                <label style="margin: 5px; display: inline-block; font-size: 14px; color: gray;">Started At (Optional):</label><br>
+                <input type="datetime-local" id="patchSessionStartedAt"><br>
+                
+                <label style="margin: 5px; display: inline-block; font-size: 14px; color: gray;">Completed At (Optional):</label><br>
+                <input type="datetime-local" id="patchSessionCompletedAt"><br>
+                
+                <input type="text" id="patchSessionStatus" placeholder="Session Status (Optional)"><br>
+                <input type="number" id="patchSessionFatigue" placeholder="Fatigue Score (Optional)"><br>
+                <br>
+                <button onclick="modifyWorkoutSessionLogic()">Modify Session</button>
+                <br><br>
+                <p id="success" style="color:green; font-weight:bold;"></p>
+                <p id="error" style="color:red; font-weight:bold;"></p>
+            `;
+        }
+
+        async function modifyWorkoutSessionLogic() {
+            const id = document.getElementById("patchSessionId").value;
+            const routineTitle = document.getElementById("patchSessionRoutineTitle").value.trim();
+            const scheduledDate = document.getElementById("patchSessionScheduledDate").value;
+            const startedAt = document.getElementById("patchSessionStartedAt").value;
+            const completedAt = document.getElementById("patchSessionCompletedAt").value;
+            const sessionStatus = document.getElementById("patchSessionStatus").value.trim();
+            const fatigueInput = document.getElementById("patchSessionFatigue").value;
+
+            const bodyData = {};
+            if (routineTitle) bodyData.routineTitle = routineTitle;
+            if (scheduledDate) bodyData.scheduledDate = scheduledDate;
+            if (startedAt) bodyData.startedAt = startedAt;
+            if (completedAt) bodyData.completedAt = completedAt;
+            if (sessionStatus) bodyData.sessionStatus = sessionStatus;
+            if (fatigueInput) bodyData.fatigueScore = parseInt(fatigueInput);
+
+            try {
+                const response = await fetch(API + "/workout-session/get/" + id, {
+                    method: "PATCH",
+                    headers: headers(),
+                    body: JSON.stringify(bodyData)
+                });
+
+                if (response.ok) {
+                    document.getElementById("success").innerHTML = "Session Modified Successfully 👍";
+                    document.getElementById("error").innerHTML = "";
+                } else {
+                    document.getElementById("error").innerHTML = "Modification Failed ❌";
+                    document.getElementById("success").innerHTML = "";
+                }
+            } catch (e) {
+                document.getElementById("error").innerHTML = "Server Error ⚠️";
+            }
+        }
+
+        function deleteWorkoutSession() {
+            crud.innerHTML = `
+                <h2>Delete Workout Session 🗑️</h2>
+                <button onclick="loadWorkoutSession()">⬅ Back</button>
+                <br><br>
+                <input type="number" id="deleteSessionId" placeholder="Enter Session ID">
+                <br><br>
+                <button onclick="removeWorkoutSessionLogic()">Delete</button>
+                <br><br>
+                <p id="success" style="color:green; font-weight:bold;"></p>
+                <p id="error" style="color:red; font-weight:bold;"></p>
+            `;
+        }
+
+        async function removeWorkoutSessionLogic() {
+            const id = document.getElementById("deleteSessionId").value;
+            if(!id) return alert("Please enter a Session ID to delete!");
+
+            if(!confirm("Are you sure you want to delete this workout session?")) return;
+
+            try {
+                const response = await fetch(API + "/workout-session/" + id, {
+                    method: "DELETE",
+                    headers: headers()
+                });
+
+                if (response.ok) {
+                    document.getElementById("success").innerHTML = "Session Deleted Successfully 🧹";
+                    document.getElementById("error").innerHTML = "";
+                    document.getElementById("deleteSessionId").value = "";
+                } else {
+                    document.getElementById("error").innerHTML = "Delete Failed ❌";
+                    document.getElementById("success").innerHTML = "";
+                }
+            } catch (e) {
+                document.getElementById("error").innerHTML = "Server Error ⚠️";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+
+
+   <!DOCTYPE html>
+<html>
+
+<head>
+    <title>FitLog Main Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+        }
+
+        nav {
+            background: #0d6efd;
+            color: white;
+            padding: 18px;
+        }
+
+        nav h2 {
+            display: inline;
+        }
+
+        nav ul {
+            list-style: none;
+            float: right;
+            display: flex;
+            align-items: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-left: 25px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav ul li a:hover {
+            color: yellow;
+        }
+
+        .user-email {
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: normal;
+        }
+
+        .container {
+            width: 90%;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+            color: #0d6efd;
+        }
+
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .card {
+            width: 250px;
+            height: 150px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+            text-align: center;
+            padding-top: 40px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            background: #0d6efd;
+            color: white;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <h2>FitLog Dashboard</h2>
+        <ul>
+            <li><span id="nav-email" class="user-email">Logged in as: </span></li>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="register.html">Account</a></li>
+            <li><a href="login.html" onclick="logout()">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>FITLOG MANAGEMENT SYSTEM</h1>
+
+        <div class="cards">
+            <div class="card" onclick="window.location.href='account.html'">
+                <h2>System Account</h2>
+            </div>
+            <div class="card" onclick="window.location.href='routine.html'">
+                <h2>Workout Routine</h2>
+            </div>
+            <div class="card" onclick="window.location.href='exercise.html'">
+                <h2>Routine Exercise</h2>
+            </div>
+            <div class="card" onclick="window.location.href='session.html'">
+                <h2>Workout Session</h2>
+            </div>
+            <div class="card" onclick="window.location.href='log.html'">
+                <h2>Exercise Log</h2>
+            </div>
+            <div class="card" onclick="window.location.href='fitness.html'">
+                <h2>Fitness Metric</h2>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('jwt_token');
+
+        document.addEventListener("DOMContentLoaded", function() {
+            if (!token) {
+                window.location.href = 'login.html';
+            } else {
+                const liveEmail = localStorage.getItem('user_email');
+                const displayName = (liveEmail && liveEmail !== "null" && liveEmail !== "undefined") ? liveEmail : 'Admin';
+                document.getElementById('nav-email').textContent = 'Logged in as: ' + displayName;
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('jwt_token');
+            localStorage.removeItem('user_email');
+            localStorage.removeItem('role');
+            window.location.href = 'login.html';
+        }
+    </script>
+
+</body>
+</html>
