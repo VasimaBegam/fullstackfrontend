@@ -1,117 +1,332 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>FitLog - Fitness Metric Management</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitLog - Fitness Metric Management Hub</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: #f4f6f9;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: #f1f5f9;
         }
 
+        /* 1. Brand Header Navbar */
         nav {
-            background: #0d6efd;
-            color: white;
-            padding: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #111827;
+            padding: 18px 5%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid #1f2937;
         }
 
         nav h2 {
-            display: inline;
+            font-size: 22px;
+            font-weight: 800;
+            color: #3b82f6;
+            letter-spacing: 0.5px;
         }
 
         nav ul {
             list-style: none;
-            float: right;
             display: flex;
             align-items: center;
-        }
-
-        nav ul li {
-            display: inline;
-            margin-left: 25px;
-        }
-
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        nav ul li a:hover {
-            color: yellow;
+            gap: 20px;
         }
 
         .user-email {
-            font-size: 14px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-weight: normal;
+            font-size: 13px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            color: #3b82f6;
+            font-weight: 600;
         }
 
+        nav ul li a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #3b82f6;
+        }
+
+        /* 2. Page Structure Container */
         .container {
             width: 90%;
-            margin: auto;
+            max-width: 1200px;
+            margin: 40px auto;
         }
 
         h1 {
-            text-align: center;
-            margin-top: 30px;
-            color: #0d6efd;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+            margin-bottom: 30px;
+            border-left: 4px solid #3b82f6;
+            padding-left: 15px;
+            text-transform: uppercase;
         }
 
-        #crudSection {
-            margin-top: 40px;
-            background: white;
-            padding: 20px;
+        /* 3. Upper Presentation Banner Section (Webpage Look) */
+        .promo-banner {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            background: #111827;
+            color: white;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            border: 1px solid #1f2937;
+        }
+
+        .promo-text {
+            padding: 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .promo-text h3 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .promo-text p {
+            color: #94a3b8;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .metrics-panel {
+            background: #1f2937;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 15px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .metric-item {
+            background: #111827;
+            padding: 14px;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px gray;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #374151;
         }
 
+        .metric-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .metric-icon { font-size: 22px; }
+        .metric-title { font-weight: 600; font-size: 14px; color: #f1f5f9; }
+        .metric-desc { font-size: 12px; color: #64748b; }
+        .metric-value { background: rgba(59, 130, 246, 0.15); color: #3b82f6; padding: 4px 12px; border-radius: 6px; font-weight: 700; font-size: 12px; }
+
+        /* 4. Feature Cards Grid Layer */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid #1f2937;
+            padding: 25px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #3b82f6;
+            background: #111827;
+        }
+
+        .feature-card h4 {
+            font-size: 17px;
+            color: #ffffff;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        /* 5. Health Alert Info Strip */
+        .info-strip {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-left: 4px solid #10b981;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+            font-size: 14px;
+            color: #a7f3d0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* 6. Core Operational CRUD Console (Keela Iruka Main Dappa) */
+        #crudSection {
+            background: #111827;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid #1f2937;
+            border-top: 4px solid #3b82f6;
+        }
+
+        #crudSection h2 {
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -0.3px;
+        }
+
+        /* Interactive Trigger Buttons */
         button {
-            padding: 10px 20px;
-            margin: 5px;
-            background: #0d6efd;
+            padding: 12px 22px;
+            margin: 6px;
+            background: #3b82f6;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
             cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         button:hover {
-            background: #084298;
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(59, 130, 246, 0.35);
         }
 
+        /* Back Control Trigger Button overrides */
+        button[onclick*="loadFitnessMetric"] {
+            background: #374151;
+            box-shadow: none;
+        }
+        button[onclick*="loadFitnessMetric"]:hover {
+            background: #4b5563;
+        }
+
+        /* 7. Input Fields Inside CRUD Forms */
         input, select {
-            padding: 10px;
-            margin: 5px;
-            width: 250px;
+            padding: 14px 16px;
+            margin: 8px 0;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            font-size: 15px;
+            background-color: #1f2937;
+            color: #ffffff;
+            outline: none;
+            transition: all 0.3s ease;
+            display: block;
         }
 
+        input::placeholder { color: #64748b; }
+        input:focus {
+            border-color: #3b82f6;
+            background-color: #111827;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+
+        input[type="date"] {
+            color-scheme: dark;
+        }
+
+        /* 8. Dynamic Responsive Content Grid Tables */
         table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        table, tr, th, td {
-            border: 1px solid gray;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 25px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #1f2937;
         }
 
         th {
-            background: #0d6efd;
-            color: white;
+            background: #1f2937;
+            color: #f1f5f9;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #374151;
         }
 
-        th, td {
-            padding: 10px;
-            text-align: center;
+        td {
+            background: #111827;
+            color: #cbd5e1;
+            font-size: 14px;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        th, td { padding: 16px; text-align: center; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #1e293b; color: #ffffff; }
+
+        #success, #error {
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            .promo-banner, .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .metrics-panel {
+                border-left: none;
+                border-top: 4px solid #3b82f6;
+            }
         }
     </style>
 </head>
@@ -119,7 +334,7 @@
 <body>
 
     <nav>
-        <h2>FitLog Fitness Metric Panel</h2>
+        <h2>FitLog Metric Panel</h2>
         <ul>
             <li><span id="nav-email" class="user-email">Logged in as: </span></li>
             <li><a href="Dashboard.html">🏠 Dashboard Hub</a></li>
@@ -128,7 +343,59 @@
     </nav>
 
     <div class="container">
-        <h1>FITNESS METRIC MANAGEMENT</h1>
+        <h1>Fitness Metric Management</h1>
+
+        <div class="promo-banner">
+            <div class="promo-text">
+                <h3>Decipher Your Body Composition Analytics</h3>
+                <p>Weight is just a simple number, but body metrics reveal the true story of your transformation. FitLog’s specialized analytics portal map changes across your fat percentage and skeletal structural dimensions to keep your health mapping technically precise.</p>
+                <p>Log your biometric variations regularly below to accurately evaluate your lean muscle growth ratios and manage metabolic progression records over time.</p>
+            </div>
+            
+            <div class="metrics-panel">
+                <div class="metric-item">
+                    <div class="metric-meta">
+                        <span class="metric-icon">📉</span>
+                        <div>
+                            <div class="metric-title">Current Base Weight</div>
+                            <div class="metric-desc">Overall Mass Scale Balance</div>
+                        </div>
+                    </div>
+                    <div class="metric-value">74.2 KG</div>
+                </div>
+
+                <div class="metric-item">
+                    <div class="metric-meta">
+                        <span class="metric-icon">🧬</span>
+                        <div>
+                            <div class="metric-title">Mean Body Fat Index</div>
+                            <div class="metric-desc">Adipose Tissue Percentage</div>
+                        </div>
+                    </div>
+                    <div class="metric-value" style="color: #10b981; background: rgba(16, 185, 129, 0.15);">14.8 %</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h4>📏 Anthropometric Logs</h4>
+                <p>Log precise structural changes by tracking chest width and waist line reductions. Essential framework analytics for body recomposition goals.</p>
+            </div>
+            <div class="feature-card">
+                <h4>🩸 Composition Auditing</h4>
+                <p>Monitor your lean-mass-to-fat ratios. Keep data structures updated using secure network nodes to protect your body composition history profiles.</p>
+            </div>
+            <div class="feature-card">
+                <h4>🏁 REST Driven Consolidation</h4>
+                <p>Process your daily measurements using standard POST, PUT, and PATCH protocols directly hitting the cloud matrix layer down below instantly.</p>
+            </div>
+        </div>
+
+        <div class="info-strip">
+            <span>🛡️</span>
+            <p><strong>Transformation Guide:</strong> For the most consistent analytics, always register your metrics inside the <strong>CRUD Console</strong> early in the morning on an empty stomach!</p>
+        </div>
 
         <div id="crudSection">
             </div>
@@ -139,7 +406,7 @@
         const token = localStorage.getItem('jwt_token');
         const crud = document.getElementById("crudSection");
 
-        // Auth Guard
+        // Auth Guard Control System
         document.addEventListener("DOMContentLoaded", function() {
             if (!token) {
                 window.location.href = '../login.html';
@@ -172,7 +439,7 @@
 
         function loadFitnessMetric() {
             crud.innerHTML = `
-                <h2 align="center">Fitness Metric CRUD</h2>
+                <h2 style="text-align: center;">Fitness Metric CRUD Console</h2>
                 <br>
                 <div style="text-align: center;">
                     <button onclick="postFitnessMetric()">POST</button>
@@ -193,7 +460,7 @@
                 <button onclick="loadFitnessMetric()">⬅ Back</button>
                 <br><br>
                 <input type="number" id="metricId" placeholder="ID"><br>
-                <label style="margin: 5px; display: inline-block; font-size: 14px; color: gray;">Recorded Date:</label><br>
+                <label style="margin: 5px 0; display: block; font-size: 14px; color: #94a3b8;">Recorded Date:</label>
                 <input type="date" id="metricDate"><br>
                 <input type="number" step="0.01" id="metricWeight" placeholder="Body Weight (Kg)"><br>
                 <input type="number" step="0.01" id="metricFat" placeholder="Body Fat Percentage (%)"><br>
@@ -202,8 +469,8 @@
                 <br>
                 <button onclick="saveFitnessMetricLogic()">Save Metric</button>
                 <br><br>
-                <p id="success" style="color:green; font-weight:bold;"></p>
-                <p id="error" style="color:red; font-weight:bold;"></p>
+                <p id="success" style="color:#10b981; font-weight:bold;"></p>
+                <p id="error" style="color:#ef4444; font-weight:bold;"></p>
             `;
         }
 
@@ -294,7 +561,7 @@
                 <button onclick="loadFitnessMetric()">⬅ Back</button>
                 <br><br>
                 <input type="number" id="searchMetricId" placeholder="Enter Metric ID">
-                <br><br>
+                <br>
                 <button onclick="searchFitnessMetricLogic()">Search</button>
                 <br><br>
                 <div id="metricResult"></div>
@@ -326,7 +593,7 @@
                         </table>
                     `;
                 } else {
-                    document.getElementById("metricResult").innerHTML = "<h3 style='color:red;'>Metric Not Found</h3>";
+                    document.getElementById("metricResult").innerHTML = "<h3 style='color:#ef4444; margin-top:15px;'>Metric Not Found</h3>";
                 }
             } catch (e) {
                 alert("Server Error");
@@ -339,7 +606,7 @@
                 <button onclick="loadFitnessMetric()">⬅ Back</button>
                 <br><br>
                 <input type="number" id="updateMetricId" placeholder="Enter Metric ID"><br>
-                <label style="margin: 5px; display: inline-block; font-size: 14px; color: gray;">Recorded Date:</label><br>
+                <label style="margin: 5px 0; display: block; font-size: 14px; color: #94a3b8;">Recorded Date:</label>
                 <input type="date" id="updateMetricDate"><br>
                 <input type="number" step="0.01" id="updateMetricWeight" placeholder="Body Weight (Kg)"><br>
                 <input type="number" step="0.01" id="updateMetricFat" placeholder="Body Fat Percentage (%)"><br>
@@ -348,8 +615,8 @@
                 <br>
                 <button onclick="updateFitnessMetricLogic()">Update Metric</button>
                 <br><br>
-                <p id="success" style="color:green; font-weight:bold;"></p>
-                <p id="error" style="color:red; font-weight:bold;"></p>
+                <p id="success" style="color:#10b981; font-weight:bold;"></p>
+                <p id="error" style="color:#ef4444; font-weight:bold;"></p>
             `;
         }
 
@@ -386,7 +653,7 @@
                 <button onclick="loadFitnessMetric()">⬅ Back</button>
                 <br><br>
                 <input type="number" id="patchMetricId" placeholder="Enter Metric ID"><br>
-                <label style="margin: 5px; display: inline-block; font-size: 14px; color: gray;">Recorded Date (Optional):</label><br>
+                <label style="margin: 5px 0; display: block; font-size: 14px; color: #94a3b8;">Recorded Date (Optional):</label>
                 <input type="date" id="patchMetricDate"><br>
                 <input type="number" step="0.01" id="patchMetricWeight" placeholder="Body Weight (Kg) (Optional)"><br>
                 <input type="number" step="0.01" id="patchMetricFat" placeholder="Body Fat Percentage (%) (Optional)"><br>
@@ -395,8 +662,8 @@
                 <br>
                 <button onclick="modifyFitnessMetricLogic()">Modify Metric</button>
                 <br><br>
-                <p id="success" style="color:green; font-weight:bold;"></p>
-                <p id="error" style="color:red; font-weight:bold;"></p>
+                <p id="success" style="color:#10b981; font-weight:bold;"></p>
+                <p id="error" style="color:#ef4444; font-weight:bold;"></p>
             `;
         }
 
@@ -440,11 +707,11 @@
                 <button onclick="loadFitnessMetric()">⬅ Back</button>
                 <br><br>
                 <input type="number" id="deleteMetricId" placeholder="Enter Metric ID">
-                <br><br>
+                <br>
                 <button onclick="removeFitnessMetricLogic()">Delete</button>
                 <br><br>
-                <p id="success" style="color:green; font-weight:bold;"></p>
-                <p id="error" style="color:red; font-weight:bold;"></p>
+                <p id="success" style="color:#10b981; font-weight:bold;"></p>
+                <p id="error" style="color:#ef4444; font-weight:bold;"></p>
             `;
         }
 
